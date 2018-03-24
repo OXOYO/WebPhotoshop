@@ -412,16 +412,10 @@ const store = new Vuex.Store({
       context: '',
       canvas: '',
       imgData: ''
-    }, {
-      id: 1,
-      name: '新建画布2',
-      width: 820,
-      height: 520,
-      context: '',
-      canvas: '',
-      imgData: ''
     }],
-    nowCanvas: 0
+    nowCanvas: 0,
+    selectGrayscale: '',
+    showRecord: false
   },
   mutations: {
     changeOffset (state, offsetArr) {
@@ -438,6 +432,13 @@ const store = new Vuex.Store({
     },
     changeNowCanvas (state, nowCanvas) {
       state.nowCanvas = nowCanvas
+      state.selectGrayscale = ''
+    },
+    changeSelectGrayscale (state, string) {
+      state.selectGrayscale = string
+    },
+    changeShowRecord (state, bool) {
+      state.showRecord = bool
     }
   }
 })

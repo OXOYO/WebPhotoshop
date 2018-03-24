@@ -19,16 +19,19 @@
 
 <script>
 import { mapState } from 'vuex'
+import Tools from '../js/effect.js'
 export default {
   name: 'sketchpad',
   data () {
     return {
       canvas: '',
       context: '',
+      imgData: '',
       endContext: '',
       prtPoint: [100, 100],
       beginPoint: [0, 0],
-      prvOffset: [0, 0]
+      prvOffset: [0, 0],
+      tools: ''
     }
   },
   computed: {
@@ -57,18 +60,29 @@ export default {
       'toolId',
       'globalColor',
       'canvasArr',
-      'nowCanvas'
+      'nowCanvas',
+      'selectGrayscale'
     ])
   },
   mounted () {
     this.init(0)
+    this.tools = new Tools()
   },
   methods: {
     init: function (id) {
-      this.canvas = document.getElementById(id)
-      this.context = this.canvas.getContext('2d')
+      if (this.canvasArr[id].canvas) {
+        this.canvas = this.canvasArr[id].canvas
+      } else {
+        this.canvas = this.canvasArr[id].canvas = document.getElementById(id)
+      }
+      if (this.canvasArr[id].context) {
+        this.context = this.canvasArr[id].context
+      } else {
+        this.context = this.canvasArr[id].context = this.canvas.getContext('2d')
+      }
       this.context.translate(0.5, 0.5)
-      if (this.canvasArr[this.nowCanvas].imgData) {
+      if (this.canvasArr[id].imgData) {
+        this.imgData = this.canvasArr[id].imgData
         this.putImageData()
       } else {
         this.getImageData()
@@ -112,11 +126,11 @@ export default {
     },
     // 获取像素信息
     getImageData: function () {
-      this.canvasArr[this.nowCanvas].imgData = this.context.getImageData(0, 0, 820, 520)
+      this.imgData = this.context.getImageData(0, 0, 820, 520)
     },
     // 像素重绘
     putImageData: function () {
-      this.context.putImageData(this.canvasArr[this.nowCanvas].imgData, 0, 0)
+      this.context.putImageData(this.imgData, 0, 0)
     },
     // 线条样式
     lineCap: function (string) {
@@ -286,6 +300,25 @@ export default {
     },
     nowCanvas: function (val) {
       this.init(val)
+    },
+    selectGrayscale: function (val) {
+      if (val) {
+        switch (val) {
+          case '黑白':
+            this.imgData = this.tools.setBlack(this.imgData)
+            break
+          case '反色':
+            this.imgData = this.tools.setInverted(this.imgData)
+            break
+          case '模糊':
+            this.imgData = this.tools.setGaussian(this.imgData)
+            break
+        }
+        this.putImageData()
+      }
+    },
+    imgData: function () {
+      this.canvasArr[this.nowCanvas].imgData = this.imgData
     }
   }
 }
@@ -303,6 +336,7 @@ export default {
 		box-shadow: 3px 3px 4px #95B8E7;
     canvas {
       cursor: crosshair;
+      vertical-align: top;
     }
     .rubber {
       cursor: url('../../src/assets/icons/rubber.png'), auto;

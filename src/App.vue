@@ -6,7 +6,7 @@
 			</div>
 			<div class="main">
 				<alloption></alloption>
-				<div class="mainContent">
+				<div class="mainContent" :style="mainStyle">
 					<wptabs></wptabs>
 					<sketchpad></sketchpad>
           <record></record>
@@ -28,12 +28,29 @@ import { mapState } from 'vuex'
 export default {
   name: 'App',
   data () {
-    return {}
+    return {
+      screenHeight: document.body.clientHeight
+    }
   },
-  computed: mapState([
-    'tools',
-    'toolId'
-  ]),
+  mounted () {
+    const that = this
+    window.onresize = () => {
+      return (() => {
+        window.screenHeight = document.body.clientHeight
+        that.screenHeight = window.screenHeight
+      })()
+    }
+  },
+  computed: {
+    ...mapState([
+      'tools',
+      'toolId'
+    ]),
+    mainStyle: function () {
+      var h = this.screenHeight - 117 + 'px'
+      return {height: h}
+    }
+  },
   components: {
     Nava,
     alloption,
@@ -68,7 +85,7 @@ html,body {
 }
 .mainContent {
 	position: relative;
-	height: 530px;
+	height: 100vh - 116px;
 	background-color: rgb(201, 211, 226);
 	border-bottom: 1px solid #95B8E7;
 }

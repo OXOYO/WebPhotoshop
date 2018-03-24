@@ -193,61 +193,61 @@
       <span>效果</span>
       <div class="navHide">
         <div class="navLine"></div>
-        <div class="navBox">
+        <div class="navBox" @click="selectGrayscale('黑白')">
           <img src="../../src/assets/icons/blackwhite.png" height="16" width="16">
           <span>黑白</span>
           <span>Ctrl+Shift+W</span>
         </div>
-        <div class="navBox">
+        <div class="navBox" @click="selectGrayscale('反色')">
           <img src="../../src/assets/icons/opsitecolor.png" height="16" width="16">
           <span>反色</span>
           <span>Ctrl+Shift+I</span>
         </div>
-        <div class="navBox">
+        <div class="navBox" @click="selectGrayscale('亮度/对比度')">
           <img src="../../src/assets/icons/light.png" height="16" width="16">
           <span>亮度/对比度</span>
         </div>
-        <div class="navBox">
+        <div class="navBox" @click="selectGrayscale('模糊')">
           <img src="../../src/assets/icons/blur.png" height="16" width="16">
           <span>模糊</span>
           <span>Ctrl+Shift+B</span>
         </div>
-        <div class="navBox">
+        <div class="navBox" @click="selectGrayscale('雾化')">
           <img src="../../src/assets/icons/cloud.png" height="16" width="16">
           <span>雾化</span>
           <span>Ctrl+Shift+M</span>
         </div>
-        <div class="navBox">
+        <div class="navBox" @click="selectGrayscale('锐化')">
           <img src="../../src/assets/icons/sharpen.png" height="16" width="16">
           <span>锐化</span>
           <span>Ctrl+Shift+S</span>
         </div>
-        <div class="navBox">
+        <div class="navBox" @click="selectGrayscale('浮雕')">
           <img src="../../src/assets/icons/float.png" height="16" width="16">
           <span>浮雕</span>
           <span>Ctrl+Shift+F</span>
         </div>
-        <div class="navBox">
+        <div class="navBox" @click="selectGrayscale('柔化')">
           <img src="../../src/assets/icons/soft.png" height="16" width="16">
           <span>柔化</span>
           <span>Ctrl+Shift+T</span>
         </div>
-        <div class="navBox">
+        <div class="navBox" @click="selectGrayscale('油画')">
           <img src="../../src/assets/icons/painting.png" height="16" width="16">
           <span>油画</span>
           <span>Ctrl+Shift+P</span>
         </div>
-        <div class="navBox">
+        <div class="navBox" @click="selectGrayscale('积木')">
           <img src="../../src/assets/icons/wood.png" height="16" width="16">
           <span>积木</span>
           <span>Ctrl+Shift+D</span>
         </div>
-        <div class="navBox">
+        <div class="navBox" @click="selectGrayscale('雕刻')">
           <img src="../../src/assets/icons/curve.png" height="16" width="16">
           <span>雕刻</span>
           <span>Ctrl+Shift+V</span>
         </div>
-        <div class="navBox">
+        <div class="navBox" @click="selectGrayscale('怀旧')">
           <img src="../../src/assets/icons/turnold.png" height="16" width="16">
           <span>怀旧</span>
           <span>Ctrl+Shift+O</span>
@@ -428,6 +428,9 @@ export default {
           img.src = this.result
         }
       }
+    },
+    selectGrayscale: function (string) {
+      this.$store.commit('changeSelectGrayscale', string)
     }
   }
 }

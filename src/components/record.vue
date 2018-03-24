@@ -1,5 +1,5 @@
 <template>
-  <div class="record">
+  <div class="record" v-show="showRecord">
     <div class="recordTitle">
       <span class="iconOne icon"></span>
       <span class="iconTle title">操作</span>
@@ -50,6 +50,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
   name: 'record',
   data () {
@@ -59,6 +60,9 @@ export default {
     }
   },
   computed: {
+    ...mapState([
+      'showRecord'
+    ]),
     classObjectOne: function () {
       return {
         selectSpan: this.selectspan === '历史记录',
