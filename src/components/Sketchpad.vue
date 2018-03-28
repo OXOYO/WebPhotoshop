@@ -311,8 +311,16 @@ export default {
             this.imgData = this.tools.setInverted(this.imgData)
             break
           case '模糊':
-            this.imgData = this.tools.setGaussian(this.imgData)
+            this.imgData = this.tools.gaussBlur(this.imgData)
             break
+          case '锐化':
+            this.imgData = this.tools.setSharpen(this.imgData)
+            break
+          case '浮雕':
+            this.imgData = this.tools.setRelief(this.imgData)
+            break
+          case '柔化':
+            this.imgData = this.tools.setSoften(this.imgData)
         }
         this.putImageData()
       }
