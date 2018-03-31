@@ -279,7 +279,7 @@ export default {
         height: 256px;
         margin: 0 10px;
         overflow: hidden;
-        background-image: url('../../src/assets/images/Maps.png');
+        background-image: url('../../src/assets/images/maps.png');
         cursor: crosshair;
       }
     }
