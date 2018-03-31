@@ -26,7 +26,6 @@ export default {
     return {
       canvas: '',
       context: '',
-      imgData: '',
       endContext: '',
       prtPoint: [100, 100],
       beginPoint: [0, 0],
@@ -52,6 +51,9 @@ export default {
         case 17:
           return this.strokeTriangular
       }
+    },
+    newImgData: function () {
+      return this.canvasArr[this.nowCanvas].imgData
     },
     ...mapState([
       // 映射 this.offset 为 store.state.offset
@@ -82,7 +84,6 @@ export default {
       }
       this.context.translate(0.5, 0.5)
       if (this.canvasArr[id].imgData) {
-        this.imgData = this.canvasArr[id].imgData
         this.putImageData()
       } else {
         this.getImageData()
@@ -126,11 +127,11 @@ export default {
     },
     // 获取像素信息
     getImageData: function () {
-      this.imgData = this.context.getImageData(0, 0, 820, 520)
+      this.canvasArr[this.nowCanvas].imgData = this.context.getImageData(0, 0, 820, 520)
     },
     // 像素重绘
     putImageData: function () {
-      this.context.putImageData(this.imgData, 0, 0)
+      this.context.putImageData(this.canvasArr[this.nowCanvas].imgData, 0, 0)
     },
     // 线条样式
     lineCap: function (string) {
@@ -289,6 +290,11 @@ export default {
     drawImage: function (img) {
       this.context.drawImage(img, 0, 0)
       this.getImageData()
+    },
+    // 效果
+    drawImg: function (string) {
+      this.canvasArr[this.nowCanvas].imgData = this.tools[string](this.canvasArr[this.nowCanvas].imgData)
+      this.putImageData()
     }
   },
   watch: {
@@ -305,28 +311,34 @@ export default {
       if (val) {
         switch (val) {
           case '黑白':
-            this.imgData = this.tools.setBlack(this.imgData)
+            this.drawImg('setBlack')
             break
           case '反色':
-            this.imgData = this.tools.setInverted(this.imgData)
+            this.drawImg('setInverted')
             break
           case '模糊':
-            this.imgData = this.tools.gaussBlur(this.imgData)
+            this.drawImg('gaussBlur')
             break
           case '锐化':
-            this.imgData = this.tools.setSharpen(this.imgData)
+            this.drawImg('setSharpen')
             break
           case '浮雕':
-            this.imgData = this.tools.setRelief(this.imgData)
+            this.drawImg('setRelief')
             break
           case '柔化':
-            this.imgData = this.tools.setSoften(this.imgData)
+            this.drawImg('setSoften')
+            break
+          case '雕刻':
+            this.drawImg('setSculpture')
+            break
+          case '怀旧':
+            this.drawImg('setNostalgia')
+            break
         }
-        this.putImageData()
       }
     },
-    imgData: function () {
-      this.canvasArr[this.nowCanvas].imgData = this.imgData
+    newImgData: function () {
+      this.$store.commit('changeCanvasArr', this.canvasArr[this.nowCanvas])
     }
   }
 }

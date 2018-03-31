@@ -175,5 +175,41 @@ class Tools {
     }
     return output
   }
+  // 雕刻
+  setSculpture (imgData) {
+    var output = document.createElement('canvas').getContext('2d').createImageData(imgData)
+    var data = imgData.data
+    var outputData = output.data
+    for (var i = 0, n = data.length; i < n; i += 4) {
+      outputData[i] = abc(i)
+      outputData[i + 1] = abc(i + 1)
+      outputData[i + 2] = abc(i + 2)
+      outputData[i + 3] = 255
+    }
+    function abc (num) {
+      return data[num + 4] - data[num - 4] + 128
+    }
+    return output
+  }
+  // 怀旧
+  setNostalgia (imgData) {
+    var output = document.createElement('canvas').getContext('2d').createImageData(imgData)
+    var data = imgData.data
+    var outputData = output.data
+    for (var i = 0, n = data.length; i < n; i += 4) {
+      var dr = 0.393 * data[i] + 0.769 * data[i + 1] + 0.189 * data[i + 2]
+      var dg = 0.349 * data[i] + 0.686 * data[i + 1] + 0.168 * data[i + 2]
+      var db = 0.272 * data[i] + 0.534 * data[i + 1] + 0.131 * data[i + 2]
+
+      var scale = Math.random() * 0.5 + 0.5
+      outputData[i] = scale * dr + (1 - scale) * data[i]
+      scale = Math.random() * 0.5 + 0.5
+      outputData[i + 1] = scale * dg + (1 - scale) * data[i + 1]
+      scale = Math.random() * 0.5 + 0.5
+      outputData[i + 2] = scale * db + (1 - scale) * data[i + 2]
+      outputData[i + 3] = 255
+    }
+    return output
+  }
 }
 export default Tools

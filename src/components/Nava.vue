@@ -35,7 +35,7 @@
           <img src="../../src/assets/icons/saveall.png" height="16" width="16">
           <span>保存全部</span>
         </div>
-        <div class="navBox">
+        <div class="navBox" @click="Saveas">
           <img src="../../src/assets/icons/saveas.png" height="16" width="16">
           <span>另存为</span>
         </div>
@@ -342,12 +342,12 @@
       <span>窗口</span>
       <div class="navHide">
         <div class="navLine"></div>
-        <div class="navBox">
+        <div class="navBox" @click="showTools">
           <img src="../../src/assets/icons/tools.png" height="16" width="16">
           <span>工具箱</span>
         </div>
         <div class="navSep"></div>
-        <div class="navBox">
+        <div class="navBox" @click="showRecord">
           <img src="../../src/assets/icons/history.png" height="16" width="16">
           <span>操作</span>
         </div>
@@ -386,11 +386,15 @@ import { mapState } from 'vuex'
 export default {
   name: 'nava',
   data () {
-    return {}
+    return {
+      timer: '',
+      iframe: ''
+    }
   },
   computed: {
     ...mapState([
-      'canvasArr'
+      'canvasArr',
+      'nowCanvas'
     ])
   },
   methods: {
@@ -423,7 +427,7 @@ export default {
               canvas: '',
               imgData: data
             }
-            a.$store.commit('changeCanvasArr', obj)
+            a.$store.commit('addCanvasArr', obj)
           }
           img.src = this.result
         }
@@ -431,6 +435,27 @@ export default {
     },
     selectGrayscale: function (string) {
       this.$store.commit('changeSelectGrayscale', string)
+    },
+    showTools: function () {
+      this.$store.commit('changeShowTools', true)
+    },
+    showRecord: function () {
+      this.$store.commit('changeShowRecord', true)
+    },
+    // 另存为
+    Saveas: function () {
+      var name = this.canvasArr[this.nowCanvas].name
+      var canvas = this.canvasArr[this.nowCanvas].canvas.toDataURL('image/png')
+      this.downloadFile(name, canvas)
+    },
+    downloadFile: function (fileName, content) {
+      var aLink = document.createElement('a')
+      aLink.download = fileName
+      aLink.href = content
+      aLink.dataset.downloadurl = ['image/png', aLink.download, aLink.href].join(':')
+      document.body.appendChild(aLink)
+      aLink.click()
+      document.body.removeChild(aLink)
     }
   }
 }

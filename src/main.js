@@ -406,7 +406,7 @@ const store = new Vuex.Store({
     globalColor: [0, 0, 0],
     canvasArr: [{
       id: 0,
-      name: '新建画布1',
+      name: '新建画布1.png',
       width: 820,
       height: 520,
       context: '',
@@ -415,7 +415,9 @@ const store = new Vuex.Store({
     }],
     nowCanvas: 0,
     selectGrayscale: '',
-    showRecord: false
+    showRecord: true,
+    showTools: true,
+    showColorPicker: false
   },
   mutations: {
     changeOffset (state, offsetArr) {
@@ -427,8 +429,11 @@ const store = new Vuex.Store({
     changeToolId (state, toolId) {
       state.toolId = toolId
     },
-    changeCanvasArr (state, obj) {
+    addCanvasArr (state, obj) {
       state.canvasArr.push(obj)
+    },
+    changeCanvasArr (state, obj) {
+      state.canvasArr[state.nowCanvas] = {...state.canvasArr[state.nowCanvas], obj}
     },
     changeNowCanvas (state, nowCanvas) {
       state.nowCanvas = nowCanvas
@@ -439,6 +444,15 @@ const store = new Vuex.Store({
     },
     changeShowRecord (state, bool) {
       state.showRecord = bool
+    },
+    changeShowTools (state, bool) {
+      state.showTools = bool
+    },
+    changeglobalColor (state, arr) {
+      state.globalColor = [].concat(arr)
+    },
+    changeShowColorPicker (state, bol) {
+      state.showColorPicker = bol
     }
   }
 })

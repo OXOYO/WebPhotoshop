@@ -10,6 +10,7 @@
 					<wptabs></wptabs>
 					<sketchpad></sketchpad>
           <record></record>
+          <colorPicker></colorPicker>
 				</div>
 			</div>
 			<bot></bot>
@@ -24,6 +25,7 @@ import wptabs from './components/wptabs.vue'
 import Sketchpad from './components/Sketchpad.vue'
 import Bot from './components/Bot.vue'
 import record from './components/record.vue'
+import colorPicker from './components/colorPicker.vue'
 import { mapState } from 'vuex'
 export default {
   name: 'App',
@@ -57,7 +59,8 @@ export default {
     wptabs,
     Sketchpad,
     Bot,
-    record
+    record,
+    colorPicker
   },
   methods: {}
 }
@@ -65,7 +68,7 @@ export default {
 
 <style>
 * {
-	font-family:Microsoft YaHei;
+	font-family: Microsoft YaHei;
 	color: #444;
 	font-size: 12px;
   -webkit-user-select:none;

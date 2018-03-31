@@ -3,7 +3,7 @@
     <div class="recordTitle">
       <span class="iconOne icon"></span>
       <span class="iconTle title">操作</span>
-      <span class="iconTwo icon"></span>
+      <span class="iconTwo icon" @click="hideRecord"></span>
     </div>
     <div class="recordWrapper">
       <div class="recordWrapperTle">
@@ -79,6 +79,9 @@ export default {
   methods: {
     selectBox: function (event) {
       this.selectspan = event.target.innerText
+    },
+    hideRecord: function () {
+      this.$store.commit('changeShowRecord', false)
     }
   }
 }
@@ -122,7 +125,7 @@ export default {
         background: -webkit-linear-gradient(top,#EFF5FF 0,#D3E3F2 100%);
         float: left;
         margin-left: 5px;
-        margin-top: 3px;
+        margin-top: 4px;
         cursor: pointer;
       }
       .selectSpan {
