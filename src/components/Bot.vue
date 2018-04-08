@@ -1,7 +1,7 @@
 <template>
 	<div class="footer">
    <span class="footLeft">{{description}}</span>
-   <span class="footRight">X:{{$store.state.offset[0]}},Y:{{$store.state.offset[1]}}</span>
+   <span class="footRight">X:{{offset[0]}},Y:{{offset[1]}}</span>
   </div>
 </template>
 
@@ -17,7 +17,8 @@ export default {
     },
     ...mapState([
       'tools',
-      'toolId'
+      'toolId',
+      'offset'
     ])
   }
 }

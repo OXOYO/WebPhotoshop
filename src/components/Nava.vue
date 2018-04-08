@@ -4,7 +4,7 @@
       <span>文件</span>
       <div class="navHide">
         <div class="navLine"></div>
-        <div class="navBox">
+        <div class="navBox" @click="showPop('newCanvas')">
           <img src="../../src/assets/icons/new.png" height="16" width="16">
           <span>新建</span>
         </div>
@@ -19,7 +19,7 @@
           <span>Ctrl+M</span>
         </div>
         <div class="navSep"></div>
-        <div class="navBox">
+        <div class="navBox" @click="showPop('closeCanvas')">
           <img src="../../src/assets/icons/cancel.png" height="16" width="16">
           <span>关闭</span>
         </div>
@@ -83,7 +83,7 @@
           <span>选择所有</span>
         </div>
         <div class="navSep"></div>
-        <div class="navBox">
+        <div class="navBox" @click="showPop('clearCanvas')">
           <img src="../../src/assets/icons/clear.png" height="16" width="16">
           <span>清空</span>
           <span>Ctrl+Q</span>
@@ -394,7 +394,9 @@ export default {
   computed: {
     ...mapState([
       'canvasArr',
-      'nowCanvas'
+      'nowCanvas',
+      'popUpsKey',
+      'showPops'
     ])
   },
   methods: {
@@ -419,13 +421,29 @@ export default {
             context.drawImage(img, 0, 0)
             var data = context.getImageData(0, 0, img.width, img.height)
             var obj = {
-              id: a.canvasArr.length,
               name: file.name,
               width: img.width,
               height: img.height,
               context: '',
               canvas: '',
-              imgData: data
+              dataArr: [{
+                id: 34,
+                imgData: data
+              }],
+              index: 0,
+              lightObj: {
+                name: 'light',
+                title: '亮度/对比度',
+                data: [{
+                  title: '亮度',
+                  num: 0,
+                  len: [-50, 50]
+                }, {
+                  title: '对比度',
+                  num: 0,
+                  len: [-50, 50]
+                }]
+              }
             }
             a.$store.commit('addCanvasArr', obj)
           }
@@ -437,10 +455,10 @@ export default {
       this.$store.commit('changeSelectGrayscale', string)
     },
     showTools: function () {
-      this.$store.commit('changeShowTools', true)
+      this.showPops.showTools = true
     },
     showRecord: function () {
-      this.$store.commit('changeShowRecord', true)
+      this.showPops.showRecord = true
     },
     // 另存为
     Saveas: function () {
@@ -456,6 +474,10 @@ export default {
       document.body.appendChild(aLink)
       aLink.click()
       document.body.removeChild(aLink)
+    },
+    // 打开弹窗
+    showPop: function (prop) {
+      this.$store.commit('changePopUpsKey', [prop, true])
     }
   }
 }

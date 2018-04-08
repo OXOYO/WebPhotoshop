@@ -1,9 +1,9 @@
 <template>
-  <div class="record" v-show="showRecord">
+  <div class="record popStyle" v-show="showPops.showRecord">
     <div class="recordTitle">
       <span class="iconOne icon"></span>
-      <span class="iconTle title">操作</span>
       <span class="iconTwo icon" @click="hideRecord"></span>
+      <div class="iconTle title">操作</div>
     </div>
     <div class="recordWrapper">
       <div class="recordWrapperTle">
@@ -12,20 +12,16 @@
       </div>
       <div class="historyList" v-show="selectspan=='历史记录'">
         <div class="recordWrapperCon">
-          <div class="recordWrapperConList">
-            <img src="../../src/assets/icons/new.png" height="16" width="16">
-            <span>新建</span>
-          </div>
-          <div class="recordWrapperConList">
-            <img src="../../src/assets/icons/new.png" height="16" width="16">
-            <span>新建</span>
+          <div class="recordWrapperConList" v-for="item in repeatArr" :key="item.id" :title="item.title">
+            <img :src="item.src" height="16" width="16">
+            <span>{{item.title}}</span>
           </div>
         </div>
         <div class="recordWrapperFot">
-          <img src="../../src/assets/icons/undoall.png" height="16" width="16" title="撤销所有">
-          <img src="../../src/assets/icons/undo.png" height="16" width="16" title="撤销">
-          <img src="../../src/assets/icons/redo.png" height="16" width="16" title="重做">
-          <img src="../../src/assets/icons/redoall.png" height="16" width="16" title="重做所有">
+          <img src="../../src/assets/icons/undoall.png" height="16" width="16" title="撤销所有" @click="changeIndex('undoall')">
+          <img src="../../src/assets/icons/undo.png" height="16" width="16" title="撤销" @click="changeIndex('undo')">
+          <img src="../../src/assets/icons/redo.png" height="16" width="16" title="重做" @click="changeIndex('redo')">
+          <img src="../../src/assets/icons/redoall.png" height="16" width="16" title="重做所有" @click="changeIndex('redoall')">
         </div>
       </div>
       <div class="levelList" v-show="selectspan=='图层管理'">
@@ -60,8 +56,24 @@ export default {
     }
   },
   computed: {
+    repeatArr () {
+      var arr = this.canvasArr[this.nowCanvas].dataArr
+      var repArr = []
+      this.effectArr.forEach(function (ele) {
+        ele.src = require('../../src/assets/icons/' + ele.name + '.png')
+      })
+      var tollsArr = this.tools.concat(this.effectArr)
+      arr.forEach(ele => {
+        repArr.push(tollsArr[ele.id])
+      })
+      return repArr
+    },
     ...mapState([
-      'showRecord'
+      'canvasArr',
+      'nowCanvas',
+      'tools',
+      'effectArr',
+      'showPops'
     ]),
     classObjectOne: function () {
       return {
@@ -81,7 +93,24 @@ export default {
       this.selectspan = event.target.innerText
     },
     hideRecord: function () {
-      this.$store.commit('changeShowRecord', false)
+      this.showPops.showRecord = false
+    },
+    changeIndex (str) {
+      var length = this.canvasArr[this.nowCanvas].dataArr.length - 1
+      var index = this.canvasArr[this.nowCanvas].index
+      if (str === 'undo') {
+        if (index) {
+          this.canvasArr[this.nowCanvas].index = index - 1
+        }
+      } else if (str === 'redo') {
+        if (index < length) {
+          this.canvasArr[this.nowCanvas].index = index + 1
+        }
+      } else if (str === 'undoall') {
+        this.canvasArr[this.nowCanvas].index = 0
+      } else {
+        this.canvasArr[this.nowCanvas].index = length
+      }
     }
   }
 }
@@ -93,27 +122,14 @@ export default {
   top: 4px;
   right: 10px;
   width: 238px;
-  padding: 5px;
-  border: 1px solid #81ADE3;
-  border-radius: 5px;
-  background: linear-gradient(to bottom,#EFF5FF 0,#A7C4EA 20%);
   .recordTitle {
-    display: flex;
     .iconOne {
       background: url('../../src/assets/icons/history.png') no-repeat center center;
-    }
-    .iconTwo {
-      background: url('../../src/assets/default/panel_tools.png') no-repeat -16px 0px;
-      margin-left: 182px;
-      cursor: pointer;
     }
   }
   .recordWrapper {
     position: relative;
     height: 164px;
-    margin-top: 5px;
-    border: 1px solid #81ADE3;
-    background-color: #ffffff;
     .recordWrapperTle {
       height: 29px;
       background-color: #D3E3F2;
@@ -139,6 +155,7 @@ export default {
       width: 100%;
       .recordWrapperCon {
         height: 110px;
+        overflow-y: auto;
         .recordWrapperConList {
           height: 24px;
           border: 1px solid #fff;

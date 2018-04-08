@@ -1,5 +1,5 @@
 <template>
-  <div class="wptabs" v-show="showTools">
+  <div class="wptabs" v-show="showPops.showTools">
     <div class="toolsTittle">
       <img src="../../src/assets/icons/tools.png" height="16" width="16">
       <span class="title">工具箱</span>
@@ -11,7 +11,7 @@
           <img :src="item.src">
         </li>
       </ul>
-      <div title="颜色选择器" class="colorSelect" :style="{backgroundColor: colorStyle}" @click="isShow"></div>
+      <div title="颜色选择器" class="colorSelect" :style="colorStyle" @click="isShow"></div>
     </div>
   </div>
 </template>
@@ -31,14 +31,17 @@ export default {
       return this.tools
     },
     colorStyle () {
-      return 'rgb(' + this.globalColor[0] + ',' + this.globalColor[1] + ',' + this.globalColor[2] + ')'
+      var string = 'rgb(' + this.globalColor[0] + ',' + this.globalColor[1] + ',' + this.globalColor[2] + ')'
+      return {
+        'background-color': string
+      }
     },
     ...mapState([
       'tools',
       'toolId',
-      'showTools',
       'globalColor',
-      'showColorPicker'
+      'showColorPicker',
+      'showPops'
     ])
   },
   methods: {
@@ -46,7 +49,7 @@ export default {
       this.$store.commit('changeToolId', index)
     },
     hideTools: function () {
-      this.$store.commit('changeShowTools', false)
+      this.showPops.showTools = false
     },
     isShow: function () {
       this.$store.commit('changeShowColorPicker', !this.showColorPicker)

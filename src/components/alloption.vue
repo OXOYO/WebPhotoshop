@@ -13,11 +13,11 @@
       </li>
     </ul>
     <div class="tabs">
-      <div class="tabsInner" v-for="(item, index) in canvasArr" :key="item.id" :class="{tabsInnerSelect: index===nowCanvas}">
+      <div class="tabsInner" v-for="(item, index) in canvasArr" :key="index" :class="{tabsInnerSelect: index===nowCanvas}">
         <div @click="changeNowCanvas(index)">
           <img src="../../src/assets/icons/log.png" height="16" width="16">
           <span class="tabsInnerName title">{{item.name}}</span>
-          <span class="tabsInnerDel icon"></span>
+          <span class="tabsInnerDel icon" @click.stop="popCanvas(index)"></span>
         </div>
       </div>
     </div>
@@ -58,6 +58,9 @@ export default {
   methods: {
     changeNowCanvas: function (index) {
       this.$store.commit('changeNowCanvas', index)
+    },
+    popCanvas: function (index) {
+      this.$store.commit('popCanvasArr', index)
     }
   }
 }

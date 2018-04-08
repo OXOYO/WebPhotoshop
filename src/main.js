@@ -402,22 +402,90 @@ const store = new Vuex.Store({
         description: '点击减淡或加深按钮改变图像透明度。 尺寸：464x146'
       }
     ],
+    effectArr: [{
+      name: 'blackwhite',
+      title: '黑白 Ctrl+Shift+W'
+    }, {
+      name: 'opsitecolor',
+      title: '反色 Ctrl+Shift+I'
+    }, {
+      name: 'light',
+      title: '亮度/对比度'
+    }, {
+      name: 'blur',
+      title: '模糊 Ctrl+Shift+B'
+    }, {
+      name: 'cloud',
+      title: '雾化 Ctrl+Shift+M'
+    }, {
+      name: 'sharpen',
+      title: '锐化 Ctrl+Shift+S'
+    }, {
+      name: 'float',
+      title: '浮雕 Ctrl+Shift+F'
+    }, {
+      name: 'soft',
+      title: '柔化 Ctrl+Shift+T'
+    }, {
+      name: 'painting',
+      title: '油画 Ctrl+Shift+P'
+    }, {
+      name: 'wood',
+      title: '积木 Ctrl+Shift+D'
+    }, {
+      name: 'curve',
+      title: '雕刻 Ctrl+Shift+V'
+    }, {
+      name: 'turnold',
+      title: '怀旧 Ctrl+Shift+O'
+    }, {
+      name: 'new',
+      title: '新建'
+    }],
     toolId: 8,
     globalColor: [0, 0, 0],
     canvasArr: [{
-      id: 0,
       name: '新建画布1.png',
       width: 820,
       height: 520,
       context: '',
       canvas: '',
-      imgData: ''
+      imgData: '',
+      dataArr: [{
+        id: 34,
+        imgData: ''
+      }],
+      index: 0,
+      // 亮度/对比度
+      lightObj: {
+        name: 'light',
+        title: '亮度/对比度',
+        data: [{
+          title: '亮度',
+          num: 0,
+          len: [-50, 50]
+        }, {
+          title: '对比度',
+          num: 0,
+          len: [-50, 50]
+        }]
+      }
     }],
     nowCanvas: 0,
     selectGrayscale: '',
-    showRecord: true,
-    showTools: true,
-    showColorPicker: false
+    showColorPicker: false,
+    // 窗口
+    showPops: {
+      showRecord: true,
+      showTools: true
+    },
+    // 各种弹窗开启
+    popUpsKey: {
+      newCanvas: false,
+      closeCanvas: false,
+      clearCanvas: false,
+      fieldset: false
+    }
   },
   mutations: {
     changeOffset (state, offsetArr) {
@@ -432,6 +500,25 @@ const store = new Vuex.Store({
     addCanvasArr (state, obj) {
       state.canvasArr.push(obj)
     },
+    popCanvasArr (state, index) {
+      state.canvasArr.splice(index, 1)
+      if (index < state.nowCanvas) state.nowCanvas = state.nowCanvas - 1
+      if (state.canvasArr.length - 1 < state.nowCanvas) state.nowCanvas = state.canvasArr.length - 1
+    },
+    // 改变dataArr
+    changeDataArr (state, obj) {
+      state.canvasArr[state.nowCanvas].index = state.canvasArr[state.nowCanvas].dataArr.length
+      state.canvasArr[state.nowCanvas].dataArr.push(obj)
+    },
+    // 改变index
+    changeIndex (state, index) {
+      state.canvasArr[state.nowCanvas].index = index
+    },
+    // 清除画布
+    clearCanvas (state) {
+      state.canvasArr[state.nowCanvas].dataArr = [].concat(state.canvasArr[state.nowCanvas].dataArr[0])
+      state.canvasArr[state.nowCanvas].index = 0
+    },
     changeCanvasArr (state, obj) {
       state.canvasArr[state.nowCanvas] = {...state.canvasArr[state.nowCanvas], obj}
     },
@@ -441,18 +528,18 @@ const store = new Vuex.Store({
     },
     changeSelectGrayscale (state, string) {
       state.selectGrayscale = string
-    },
-    changeShowRecord (state, bool) {
-      state.showRecord = bool
-    },
-    changeShowTools (state, bool) {
-      state.showTools = bool
+      if (string === '亮度/对比度') {
+        state.popUpsKey.fieldset = true
+      }
     },
     changeglobalColor (state, arr) {
       state.globalColor = [].concat(arr)
     },
     changeShowColorPicker (state, bol) {
       state.showColorPicker = bol
+    },
+    changePopUpsKey (state, arr) {
+      state.popUpsKey[arr[0]] = arr[1]
     }
   }
 })

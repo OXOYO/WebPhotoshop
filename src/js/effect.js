@@ -1,4 +1,7 @@
 class Tools {
+  constructor (a) {
+    this.a = a
+  }
   // 灰度化
   setGrayscale (imgData) {
     var rgb
@@ -11,6 +14,8 @@ class Tools {
   }
   // 黑白
   setBlack (imgData) {
+    var output = document.createElement('canvas').getContext('2d').createImageData(imgData)
+    var outputData = output.data
     var rgb
     var data = imgData.data
     for (var i = 0, n = data.length; i < n; i += 4) {
@@ -20,19 +25,23 @@ class Tools {
       } else {
         rgb = 0
       }
-      data[i] = data[i + 1] = data[i + 2] = rgb
+      outputData[i] = outputData[i + 1] = outputData[i + 2] = rgb
+      outputData[i + 3] = data[i + 3]
     }
-    return imgData
+    return output
   }
   // 反色
   setInverted (imgData) {
+    var output = document.createElement('canvas').getContext('2d').createImageData(imgData)
+    var outputData = output.data
     var data = imgData.data
     for (var i = 0, n = data.length; i < n; i += 4) {
-      data[i] = 255 - data[i]
-      data[i + 1] = 255 - data[i + 1]
-      data[i + 2] = 255 - data[i + 2]
+      outputData[i] = 255 - data[i]
+      outputData[i + 1] = 255 - data[i + 1]
+      outputData[i + 2] = 255 - data[i + 2]
+      outputData[i + 3] = data[i + 3]
     }
-    return imgData
+    return output
   }
   // 锐化
   setSharpen (imgData) {
@@ -208,6 +217,49 @@ class Tools {
       scale = Math.random() * 0.5 + 0.5
       outputData[i + 2] = scale * db + (1 - scale) * data[i + 2]
       outputData[i + 3] = 255
+    }
+    return output
+  }
+  // 亮度/对比度
+  setLight (imgData, Brightness, Contrast) {
+    var output = document.createElement('canvas').getContext('2d').createImageData(imgData)
+    var data = imgData.data
+    var w = imgData.width
+    var h = imgData.height
+    var outputData = output.data
+    var allGray = 0
+    for (let i = 0, n = data.length; i < n; i += 4) {
+      allGray = allGray + (0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2])
+      outputData[i] = data[i]
+      outputData[i + 1] = data[i + 1]
+      outputData[i + 2] = data[i + 2]
+      outputData[i + 3] = data[i + 3]
+    }
+    var Threshold = allGray / (w * h)
+    if (Contrast >= 0) {
+      // 先调整亮度，再调整对比度
+      for (let i = 0, n = outputData.length; i < n; i += 4) {
+        // 调整亮度
+        outputData[i] = outputData[i] + Brightness
+        outputData[i + 1] = outputData[i + 1] + Brightness
+        outputData[i + 2] = outputData[i + 2] + Brightness
+        // 调整对比度
+        outputData[i] = outputData[i] + (outputData[i] - Threshold) * (1 / (1 - Contrast / 255) - 1)
+        outputData[i + 1] = outputData[i + 1] + (outputData[i + 1] - Threshold) * (1 / (1 - Contrast / 255) - 1)
+        outputData[i + 2] = outputData[i + 2] + (outputData[i + 2] - Threshold) * (1 / (1 - Contrast / 255) - 1)
+      }
+    } else {
+      // 先调整对比度，再调整亮度
+      for (let i = 0, n = data.length; i < n; i += 4) {
+        // 调整对比度
+        outputData[i] = outputData[i] + (outputData[i] - Threshold) * Contrast / 255
+        outputData[i + 1] = outputData[i + 1] + (outputData[i + 1] - Threshold) * Contrast / 255
+        outputData[i + 2] = outputData[i + 2] + (outputData[i + 2] - Threshold) * Contrast / 255
+        // 调整亮度
+        outputData[i] = outputData[i] + Brightness
+        outputData[i + 1] = outputData[i + 1] + Brightness
+        outputData[i + 2] = outputData[i + 2] + Brightness
+      }
     }
     return output
   }

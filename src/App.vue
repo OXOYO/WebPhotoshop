@@ -15,6 +15,7 @@
 			</div>
 			<bot></bot>
 		</div>
+    <popUps></popUps>
 	</div>
 </template>
 
@@ -26,6 +27,7 @@ import Sketchpad from './components/Sketchpad.vue'
 import Bot from './components/Bot.vue'
 import record from './components/record.vue'
 import colorPicker from './components/colorPicker.vue'
+import popUps from './components/popUps.vue'
 import { mapState } from 'vuex'
 export default {
   name: 'App',
@@ -60,7 +62,8 @@ export default {
     Sketchpad,
     Bot,
     record,
-    colorPicker
+    colorPicker,
+    popUps
   },
   methods: {}
 }
@@ -100,5 +103,30 @@ html,body {
 .title {
   font-weight: bold;
   color: #0E2D5F;
+}
+.popStyle {
+  padding: 5px;
+  border: 1px solid #81ADE3;
+  border-radius: 5px;
+  background: linear-gradient(to bottom,#EFF5FF 0,#A7C4EA 20%);
+}
+.recordTitle {
+  margin-bottom: 5px;
+}
+.recordWrapper {
+  border: 1px solid #81ADE3;
+  background-color: #ffffff;
+}
+.iconOne {
+  float: left;
+}
+.iconTwo {
+  float: right;
+  background: url('../src/assets/default/panel_tools.png') no-repeat -16px 0px;
+  cursor: pointer;
+}
+.iconTle {
+  vertical-align: top;
+  padding-left: 18px;
 }
 </style>
