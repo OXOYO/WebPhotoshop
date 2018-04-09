@@ -392,7 +392,7 @@ export default {
         margin: 0 10px;
         overflow: hidden;
         background-color: rgb(255, 0, 0);
-        background-image: url('../../src/assets/images/maps.png');
+        background-image: url('../../src/assets/images/Maps.png');
         cursor: crosshair;
         img {
           position: absolute;
