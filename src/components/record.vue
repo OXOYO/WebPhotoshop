@@ -12,7 +12,13 @@
       </div>
       <div class="historyList" v-show="selectspan=='历史记录'">
         <div class="recordWrapperCon">
-          <div class="recordWrapperConList" v-for="item in repeatArr" :key="item.id" :title="item.title">
+          <div
+            class="recordWrapperConList"
+            v-for="(item, index) in repeatArr"
+            :key="item.id" :title="item.title"
+            :class="{selectStyle: index===getArrIndex}"
+            @click="getArrIndex=index"
+          >
             <img :src="item.src" height="16" width="16">
             <span>{{item.title}}</span>
           </div>
@@ -75,6 +81,14 @@ export default {
       'effectArr',
       'showPops'
     ]),
+    getArrIndex: {
+      get () {
+        return this.canvasArr[this.nowCanvas].index
+      },
+      set (val) {
+        this.canvasArr[this.nowCanvas].index = val
+      }
+    },
     classObjectOne: function () {
       return {
         selectSpan: this.selectspan === '历史记录',
@@ -156,6 +170,7 @@ export default {
       .recordWrapperCon {
         height: 110px;
         overflow-y: auto;
+        cursor: pointer;
         .recordWrapperConList {
           height: 24px;
           border: 1px solid #fff;
@@ -165,10 +180,10 @@ export default {
           img {
             margin: 0 5px;
           }
-          &:hover {
-            border-color: #95BCFC;
-            background-color: #eaf2ff;
-          }
+        }
+        .selectStyle {
+          border-color: #95BCFC;
+          background-color: #eaf2ff;
         }
       }
       .recordWrapperFot {

@@ -81,11 +81,11 @@ export default {
       this.canvas = this.canvasArr[id].canvas = document.getElementById(id)
       this.context = this.canvasArr[id].context = this.canvas.getContext('2d')
       this.context.translate(0.5, 0.5)
-      if (!this.canvasArr[this.nowCanvas].dataArr[0].imgData) {
+      if (!this.canvasArr[this.nowCanvas].dataArr[this.newIndex].imgData) {
         this.getImageData()
-        this.canvasArr[this.nowCanvas].dataArr[0].imgData = this.imgData
+        this.canvasArr[this.nowCanvas].dataArr[this.newIndex].imgData = this.imgData
       } else {
-        this.imgData = this.canvasArr[this.nowCanvas].dataArr[0].imgData
+        this.imgData = this.canvasArr[this.nowCanvas].dataArr[this.newIndex].imgData
         this.putImageData()
       }
     },
@@ -370,6 +370,7 @@ export default {
         if (this.selectGrayscale === '亮度/对比度') {
           this.prvImagaData = this.canvasArr[this.nowCanvas].dataArr[val].imgData
         }
+        console.log(1)
       }
     },
     imgData (val) {
