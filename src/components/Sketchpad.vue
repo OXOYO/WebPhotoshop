@@ -1,10 +1,12 @@
 <template>
 	<div class="sketchpad">
-		<div @mousemove="move($event)">
+		<div class="canvasBox"
+      @mousedown="down()"
+      @mousemove="move($event)"
+      @mouseup="up"
+    >
       <!-- 临时画板 -->
 			<canvas
-        @mousedown="down($event)"
-        @mouseup="up"
         v-bind:class="{rubber: toolId===9||toolId===8}"
         v-for="(item, index) in canvasArr"
         :key="index"
@@ -12,6 +14,14 @@
         :width="item.width"
         :height="item.height"
         v-show="nowCanvas===index"
+      ></canvas>
+      <canvas
+        id="moveBox"
+        v-show="selectToolObj.isShow"
+        :style="{left: selectToolObj.margin[0] + 'px', top: selectToolObj.margin[1] + 'px'}"
+        :width="selectToolObj.moveBoxLen[0]"
+        :height="selectToolObj.moveBoxLen[1]"
+        :class="{cursorMove: toolId === 1}"
       ></canvas>
 		</div>
 	</div>
@@ -24,36 +34,33 @@ export default {
   name: 'sketchpad',
   data () {
     return {
+      wrapper: '',
       canvas: '',
       context: '',
       imgData: '',
       endContext: '',
+      strokeEvent: this.pen,
       prtPoint: [100, 100],
       beginPoint: [0, 0],
       prvOffset: [0, 0],
       effect: '',
-      prvImagaData: {}
+      prvImagaData: {},
+      selectToolObj: {
+        canvas: '',
+        context: '',
+        data: {
+          imgData: '',
+          moveBoxData: ''
+        },
+        margin: [0, 0],
+        // moveBox的宽高
+        moveBoxLen: [0, 0],
+        isShow: false,
+        oldId: ''
+      }
     }
   },
   computed: {
-    strokeEvent () {
-      switch (this.toolId) {
-        case 0:
-          return this.selectTool
-        case 8:
-          return this.pen
-        case 9:
-          return this.strokeSubber
-        case 13:
-          return this.strokeLine
-        case 15:
-          return this.strokeRect
-        case 16:
-          return this.strokeEllipse
-        case 17:
-          return this.strokeTriangular
-      }
-    },
     newIndex () {
       return this.canvasArr[this.nowCanvas].index
     },
@@ -75,12 +82,12 @@ export default {
   mounted () {
     this.init(0)
     this.effect = new Effect(this)
+    this.wrapper = document.getElementsByClassName('canvasBox')[0]
   },
   methods: {
     init: function (id) {
       this.canvas = this.canvasArr[id].canvas = document.getElementById(id)
       this.context = this.canvasArr[id].context = this.canvas.getContext('2d')
-      this.context.translate(0.5, 0.5)
       if (!this.canvasArr[this.nowCanvas].dataArr[this.newIndex].imgData) {
         this.getImageData()
         this.canvasArr[this.nowCanvas].dataArr[this.newIndex].imgData = this.imgData
@@ -91,30 +98,56 @@ export default {
     },
     move: function (event) {
       this.prvOffset = this.offset
-      this.offset[0] = event.offsetX
-      this.offset[1] = event.offsetY
+      if (event.target.id === 'moveBox') {
+        this.offset[0] = event.offsetX + document.getElementById('moveBox').offsetLeft
+        this.offset[1] = event.offsetY + document.getElementById('moveBox').offsetTop
+      } else {
+        this.offset[0] = event.offsetX
+        this.offset[1] = event.offsetY
+      }
       this.$store.commit('changeOffset', this.offset)
     },
-    down: function (event) {
-      this.beginPoint[0] = event.offsetX
-      this.beginPoint[1] = event.offsetY
+    down: function () {
+      if (!this.strokeEvent) return
+      this.beginPoint[0] = this.offset[0]
+      this.beginPoint[1] = this.offset[1]
       this.context.fillStyle = this.rgba(1)
       this.context.strokeStyle = this.rgba(1)
       this.context.lineWidth = 1
-      this.context.setLineDash([0])
       this.context.globalCompositeOperation = 'source-over'
       this.context.lineCap = 'round'
-      this.canvas.addEventListener('mousemove', this.stroke)
+      this.wrapper.addEventListener('mousemove', this.stroke, true)
     },
     up: function () {
-      this.canvas.removeEventListener('mousemove', this.stroke)
-      if (this.toolId) this.getImageData()
+      this.wrapper.removeEventListener('mousemove', this.stroke, true)
+      this.getImageData()
       this.prtPoint = this.offset
+      if (!this.strokeEvent || this.toolId === 1) return
       var obj = {
         id: this.toolId,
         imgData: this.imgData
       }
       this.$store.commit('changeDataArr', obj)
+    },
+    // 移动moveBox
+    moveBox: function (event) {
+      this.selectToolObj.beginPoint = [this.offset[0], this.offset[1]]
+      var startPonit = [
+        document.getElementById('moveBox').offsetLeft,
+        document.getElementById('moveBox').offsetTop
+      ]
+      var a = this
+      this.wrapper.addEventListener('mousemove', boxMove)
+      this.wrapper.addEventListener('mouseup', function () {
+        a.wrapper.removeEventListener('mousemove', boxMove)
+        // a.selectToolObj.canvas.removeEventListener('mousedown', a.moveBox)
+      })
+      function boxMove () {
+        a.selectToolObj.margin = [
+          a.offset[0] - a.selectToolObj.beginPoint[0] + startPonit[0],
+          a.offset[1] - a.selectToolObj.beginPoint[1] + startPonit[1]
+        ]
+      }
     },
     // 设置RGBA
     rgba: function (a) {
@@ -173,10 +206,6 @@ export default {
           lineWidth: this.toolsArray[15][0].choose,
           alpha: parseInt(this.toolsArray[15][1].choose) / 100,
           isFill: this.toolsArray[15][3].isCheck
-        }
-      } else {
-        obj = {
-          isFill: false
         }
       }
       this.changeStyle(obj)
@@ -248,12 +277,87 @@ export default {
     },
     // 选择工具
     selectTool: function () {
-      this.context.setLineDash([3])
+      this.imgData = this.selectToolObj.imgData
+      this.selectToolObj.isShow = true
+      this.putImageData()
       if (this.toolsArray[0][0].choose === '矩形') {
-        this.strokeRect()
-      } else {
-        this.strokeArc()
+        this.selectToolObj.margin = [
+          this.beginPoint[0] < this.offset[0] ? this.beginPoint[0] : this.offset[0],
+          this.beginPoint[1] < this.offset[1] ? this.beginPoint[1] : this.offset[1]
+        ]
+        this.selectToolObj.moveBoxLen = [
+          Math.abs(this.offset[0] - this.beginPoint[0]),
+          Math.abs(this.offset[1] - this.beginPoint[1])
+        ]
       }
+    },
+    // 移动工具
+    moveSelectTool: function () {
+      // 更新canvas
+      this.$nextTick(function () {
+        this.selectToolObj.canvas = document.getElementById('moveBox')
+        this.selectToolObj.context = this.selectToolObj.canvas.getContext('2d')
+        this.getMoveData()
+        this.selectToolObj.canvas.addEventListener('mousedown', this.moveBox)
+      })
+    },
+    // 获取移动数据
+    getMoveData: function () {
+      var context = this.selectToolObj.context
+      var imgData = this.imgData
+      var w = imgData.width
+      var moveBoxData = context.getImageData(0, 0, this.selectToolObj.moveBoxLen[0], this.selectToolObj.moveBoxLen[1])
+      var data = imgData.data
+      var x1 = document.getElementById('moveBox').offsetLeft
+      var x2 = document.getElementById('moveBox').offsetLeft + this.selectToolObj.moveBoxLen[0]
+      var y1 = document.getElementById('moveBox').offsetTop
+      var y2 = document.getElementById('moveBox').offsetTop + this.selectToolObj.moveBoxLen[1]
+      var j = 0
+      for (let y = y1; y < y2; y++) {
+        for (let x = x1; x < x2; x++) {
+          var i = (w * y + x) * 4
+          moveBoxData.data[j] = data[i]
+          moveBoxData.data[j + 1] = data[i + 1]
+          moveBoxData.data[j + 2] = data[i + 2]
+          moveBoxData.data[j + 3] = data[i + 3]
+          data[i] = data[i + 1] = data[i + 2] = 255
+          j += 4
+        }
+      }
+      this.selectToolObj.moveBoxData = moveBoxData
+      this.putImageData()
+      context.putImageData(moveBoxData, 0, 0)
+    },
+    putMoveData: function () {
+      var moveBoxData = this.selectToolObj.moveBoxData.data
+      var x1 = document.getElementById('moveBox').offsetLeft
+      var x2 = document.getElementById('moveBox').offsetLeft + this.selectToolObj.moveBoxLen[0]
+      var y1 = document.getElementById('moveBox').offsetTop
+      var y2 = document.getElementById('moveBox').offsetTop + this.selectToolObj.moveBoxLen[1]
+      var imgData = this.imgData
+      var data = imgData.data
+      var w = imgData.width
+      var h = imgData.height
+      var k = 0
+      for (let y = y1; y < y2; y++) {
+        for (let x = x1; x < x2; x++) {
+          if (x > 0 && x < w && y > 0 && y < h) {
+            var i = (w * y + x) * 4
+            data[i] = moveBoxData[k] === 0 ? data[i] : moveBoxData[k]
+            data[i + 1] = moveBoxData[k + 1] === 0 ? data[i + 1] : moveBoxData[k + 1]
+            data[i + 2] = moveBoxData[k + 2] === 0 ? data[i + 2] : moveBoxData[k + 2]
+            data[i + 3] = moveBoxData[k + 3] === 0 ? data[i + 3] : moveBoxData[k + 3]
+          }
+          k += 4
+        }
+      }
+      this.putImageData()
+      this.selectToolObj.isShow = false
+      var obj = {
+        id: 1,
+        imgData: imgData
+      }
+      this.$store.commit('changeDataArr', obj)
     },
     // 绘制参数
     changeStyle: function (obj) {
@@ -370,11 +474,44 @@ export default {
         if (this.selectGrayscale === '亮度/对比度') {
           this.prvImagaData = this.canvasArr[this.nowCanvas].dataArr[val].imgData
         }
-        console.log(1)
       }
     },
     imgData (val) {
       this.canvasArr[this.nowCanvas].imgData = this.imgData
+    },
+    toolId (val, oldVal) {
+      this.selectToolObj.oldId = oldVal
+      if (oldVal === 1) {
+        this.putMoveData()
+      }
+      switch (val) {
+        case 0:
+          this.strokeEvent = this.selectTool
+          this.selectToolObj.imgData = this.imgData
+          break
+        case 1:
+          this.strokeEvent = ''
+          this.moveSelectTool()
+          break
+        case 8:
+          this.strokeEvent = this.pen
+          break
+        case 9:
+          this.strokeEvent = this.strokeSubber
+          break
+        case 13:
+          this.strokeEvent = this.strokeLine
+          break
+        case 15:
+          this.strokeEvent = this.strokeRect
+          break
+        case 16:
+          this.strokeEvent = this.strokeEllipse
+          break
+        case 17:
+          this.strokeEvent = this.strokeTriangular
+          break
+      }
     }
   }
 }
@@ -390,12 +527,23 @@ export default {
 		background-color: White;
 		border: 1px solid #95B8E7;
 		box-shadow: 3px 3px 4px #95B8E7;
+    position: relative;
+    overflow: hidden;
     canvas {
       cursor: crosshair;
       vertical-align: top;
     }
     .rubber {
       cursor: url('../../src/assets/icons/rubber.png'), auto;
+    }
+    #moveBox {
+      position: absolute;
+      z-index: 100;
+      border: 1px dashed #000;
+      transform: translateX(-1px) translateY(-1px);
+    }
+    .cursorMove {
+      cursor: Move;
     }
 	}
 }

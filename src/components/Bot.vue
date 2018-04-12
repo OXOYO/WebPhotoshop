@@ -1,7 +1,7 @@
 <template>
 	<div class="footer">
    <span class="footLeft">{{description}}</span>
-   <span class="footRight">X:{{offset[0]}},Y:{{offset[1]}}</span>
+   <span class="footRight">X:{{parseInt(offset[0])}},Y:{{parseInt(offset[1])}}</span>
   </div>
 </template>
 
