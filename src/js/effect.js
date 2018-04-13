@@ -1,6 +1,8 @@
 class Tools {
   constructor (a) {
-    this.a = a
+    for (const prop in a) {
+      this[prop] = a[prop]
+    }
   }
   // 灰度化
   setGrayscale (imgData) {

@@ -48,8 +48,8 @@
       </div>
       <div class="colorButton">
         <div class="colorButtonTop">
-          <button>确定</button>
-          <button>取消</button>
+          <button @click="isShow">确定</button>
+          <button @click="closeBox">取消</button>
         </div>
         <div class="colorButtonGrid">
           <span v-for="(item, index) in colorListArr" :key="item.id" :title="'#'+item" :style="{backgroundColor: '#'+item}" @click="changeColorGrid(index)"></span>
@@ -66,6 +66,7 @@ export default {
   name: 'colorpicker',
   data () {
     return {
+      prvColor: [],
       colorArr: [{
         H: 0,
         S: 0,
@@ -154,6 +155,10 @@ export default {
   methods: {
     isShow: function () {
       this.$store.commit('changeShowColorPicker', false)
+    },
+    closeBox: function () {
+      this.$store.commit('changeglobalColor', this.prvColor)
+      this.isShow()
     },
     changeColorGrid: function (index) {
       var col = this.colorListArr[index]
@@ -338,6 +343,19 @@ export default {
   watch: {
     newColorStyle (val) {
       this.$store.commit('changeglobalColor', [Math.round(this.colorArr[1].R), Math.round(this.colorArr[1].G), Math.round(this.colorArr[1].B)])
+    },
+    showColorPicker (val) {
+      if (val) {
+        this.prvColor = [].concat(this.globalColor)
+        var rgb = {
+          R: this.prvColor[0],
+          G: this.prvColor[1],
+          B: this.prvColor[2]
+        }
+        var col = this.rgbToHex(rgb)
+        var hsv = this.rgbTohsv(rgb)
+        this.changeArr(hsv, rgb, col)
+      }
     }
   }
 }
