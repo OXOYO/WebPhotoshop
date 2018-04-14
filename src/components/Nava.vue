@@ -1,6 +1,6 @@
 <template>
   <div class="nav">
-    <div>
+    <div class="navWrapper">
       <span>文件</span>
       <div class="navHide">
         <div class="navLine"></div>
@@ -51,7 +51,7 @@
         </div>
       </div>
     </div>
-    <div>
+    <div class="navWrapper">
       <span>编辑</span>
       <div class="navHide">
         <div class="navLine"></div>
@@ -90,7 +90,7 @@
         </div>
       </div>
     </div>
-    <div>
+    <div class="navWrapper">
       <span>图像</span>
       <div class="navHide">
         <div class="navLine"></div>
@@ -157,7 +157,7 @@
         </div>
       </div>
     </div>
-    <div>
+    <div class="navWrapper">
       <span>图层</span>
       <div class="navHide">
         <div class="navLine"></div>
@@ -189,7 +189,7 @@
         </div>
       </div>
     </div>
-    <div>
+    <div class="navWrapper">
       <span>效果</span>
       <div class="navHide">
         <div class="navLine"></div>
@@ -276,7 +276,7 @@
         </div>
       </div>
     </div>
-    <div>
+    <div class="navWrapper">
       <span>视图</span>
       <div class="navHide">
         <div class="navLine"></div>
@@ -300,7 +300,7 @@
           <span>网络</span>
         </div>
         <div class="navSep"></div>
-        <div class="navBox">
+        <div class="navBox" @click="fullScreen">
           <img src="../../src/assets/icons/fullscreen.png" height="16" width="16">
           <span>全屏模式</span>
         </div>
@@ -338,7 +338,7 @@
         </div>
       </div>
     </div>
-    <div>
+    <div class="navWrapper">
       <span>窗口</span>
       <div class="navHide">
         <div class="navLine"></div>
@@ -353,7 +353,7 @@
         </div>
       </div>
     </div>
-    <div>
+    <div class="navWrapper">
       <span>帮助</span>
       <div class="navHide">
         <div class="navLine"></div>
@@ -378,6 +378,11 @@
         </div>
       </div>
     </div>
+    <div class="navControl">
+      <img src="../../src/assets/default/closeScreen.png" alt="X" class="ctrClose" @click="closeScreen">
+      <img src="../../src/assets/default/fullScreen.png" alt="" class="ctrScreen" @click="fullScreen" v-show="!isFullScreen">
+      <img src="../../src/assets/default/exitFullScreen.png" alt="" class="ctrScreen" @click="exitFullScreen" v-show="isFullScreen">
+    </div>
   </div>
 </template>
 
@@ -388,7 +393,8 @@ export default {
   data () {
     return {
       timer: '',
-      iframe: ''
+      iframe: '',
+      isFullScreen: false
     }
   },
   computed: {
@@ -478,6 +484,50 @@ export default {
     // 打开弹窗
     showPop: function (prop) {
       this.$store.commit('changePopUpsKey', [prop, true])
+    },
+    // 全屏
+    fullScreen: function () {
+      var docElm = document.documentElement
+      if (docElm.requestFullscreen) {
+        docElm.requestFullscreen() // W3C
+        this.isFullScreen = true
+      } else if (docElm.webkitRequestFullScreen) {
+        docElm.webkitRequestFullScreen() // Chrome等
+        this.isFullScreen = true
+      } else if (docElm.mozRequestFullScreen) {
+        docElm.mozRequestFullScreen() // FireFox
+        this.isFullScreen = true
+      } else if (docElm.msRequestFullscreen) {
+        docElm.msRequestFullscreen() // IE11
+        this.isFullScreen = true
+      }
+    },
+    // 退出全屏
+    exitFullScreen: function () {
+      if (document.exitFullscreen) {
+        document.exitFullscreen() // W3C
+        this.isFullScreen = false
+      } else if (document.webkitCancelFullScreen) {
+        document.webkitCancelFullScreen() // Chrome等
+        this.isFullScreen = false
+      } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen() // FireFox
+        this.isFullScreen = false
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen() // IE11
+        this.isFullScreen = false
+      }
+    },
+    // 关闭窗口
+    closeScreen: function () {
+      if (navigator.userAgent.indexOf('Firefox') !== -1 || navigator.userAgent.indexOf('Chrome') !== -1) {
+        window.location.href = 'about:blank'
+        window.close()
+      } else {
+        window.opener = null
+        window.open('', '_self')
+        window.close()
+      }
     }
   }
 }
@@ -490,7 +540,7 @@ export default {
     background-color: #EDF5FA;
     display: flex;
     font-size: 12px;
-    &>div {
+    .navWrapper {
       position: relative;
       margin-right: 2px;
       cursor: pointer;
@@ -572,6 +622,27 @@ export default {
       &:hover {
         .navHide {
           display: block;
+        }
+      }
+    }
+    .navControl {
+      flex: 1;
+      text-align: right;
+      img {
+        float: right;
+        width: 12px;
+        height: 12px;
+        padding: 7.5px 18px;
+        cursor: pointer;
+      }
+      .ctrScreen {
+        &:hover {
+          background-color: #e5e5e5;
+        }
+      }
+      .ctrClose {
+        &:hover {
+          background-color: #ff0000;
         }
       }
     }
