@@ -47,11 +47,13 @@ var Stroke = {
     this.changeStyle(obj)
   },
   // 绘制圆形
-  strokeArc: function () {
-    var r = Math.sqrt(Math.pow((this.offset[0] - this.beginPoint[0]), 2) + Math.pow((this.offset[1] - this.beginPoint[1]), 2))
+  strokeArc: function (obj) {
+    var r = Math.sqrt(Math.pow((this.offset[0] - this.beginPoint[0]), 2) + Math.pow((this.offset[1] - this.beginPoint[1]), 2)) / 2
+    var x = (this.beginPoint[0] + this.offset[0]) / 2
+    var y = (this.beginPoint[1] + this.offset[1]) / 2
     this.context.beginPath()
-    this.context.arc(this.beginPoint[0], this.beginPoint[1], r, 0, 2 * Math.PI, true)
-    this.context.stroke()
+    this.context.arc(x, y, r, 0, 2 * Math.PI, true)
+    this.changeStyle(obj)
   },
   // 绘制三角形
   strokeTriangular: function () {
@@ -75,28 +77,32 @@ var Stroke = {
   },
   // 绘制椭圆
   strokeEllipse: function () {
-    var x = this.beginPoint[0]
-    var y = this.beginPoint[1]
-    var a = Math.abs(this.offset[0] - this.beginPoint[0])
-    var b = Math.abs(this.offset[1] - this.beginPoint[1])
-    this.context.save()
-    // 选择a、b中的较大者作为arc方法的半径参数
-    var r = (a > b) ? a : b
-    var ratioX = a / r // 横轴缩放比率
-    var ratioY = b / r // 纵轴缩放比率
-    this.context.scale(ratioX, ratioY) // 进行缩放（均匀压缩）
-    this.context.beginPath()
-    // 从椭圆的左端点开始逆时针绘制
-    this.context.moveTo((x + a) / ratioX, y / ratioY)
-    this.context.arc(x / ratioX, y / ratioY, r, 0, 2 * Math.PI)
-    this.context.closePath()
     var obj = {
       lineWidth: this.toolsArray[16][0].choose,
       alpha: parseInt(this.toolsArray[16][1].choose) / 100,
       isFill: this.toolsArray[16][3].isCheck
     }
-    this.changeStyle(obj)
-    this.context.restore()
+    if (this.toolsArray[16][4].isCheck) {
+      this.strokeArc(obj)
+    } else {
+      var x = (this.beginPoint[0] + this.offset[0]) / 2
+      var y = (this.beginPoint[1] + this.offset[1]) / 2
+      var a = Math.abs(this.offset[0] - this.beginPoint[0]) / 2
+      var b = Math.abs(this.offset[1] - this.beginPoint[1]) / 2
+      this.context.save()
+      // 选择a、b中的较大者作为arc方法的半径参数
+      var r = (a > b) ? a : b
+      var ratioX = a / r // 横轴缩放比率
+      var ratioY = b / r // 纵轴缩放比率
+      this.context.scale(ratioX, ratioY) // 进行缩放（均匀压缩）
+      this.context.beginPath()
+      // 从椭圆的左端点开始逆时针绘制
+      this.context.moveTo((x + a) / ratioX, y / ratioY)
+      this.context.arc(x / ratioX, y / ratioY, r, 0, 2 * Math.PI)
+      this.context.closePath()
+      this.changeStyle(obj)
+      this.context.restore()
+    }
   },
   // 画笔
   pen: function () {
