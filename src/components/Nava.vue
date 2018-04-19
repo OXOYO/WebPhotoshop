@@ -358,9 +358,11 @@
       <div class="navHide">
         <div class="navLine"></div>
         <div class="navBox">
-          <img src="../../src/assets/icons/help.png" height="16" width="16">
-          <span>帮助文档</span>
-          <span>Ctrl+F1</span>
+          <router-link to="/help" target="_blank">
+            <img src="../../src/assets/icons/help.png" height="16" width="16">
+            <span>帮助文档</span>
+            <span>Ctrl+F1</span>
+          </router-link>
         </div>
         <div class="navBox">
           <img src="../../src/assets/icons/helpsite.png" height="16" width="16">
@@ -373,8 +375,10 @@
         </div>
         <div class="navSep"></div>
         <div class="navBox">
-          <img src="../../src/assets/icons/about.png" height="16" width="16">
-          <span>关于</span>
+          <router-link to="/about" target="_blank">
+            <img src="../../src/assets/icons/about.png" height="16" width="16">
+            <span>关于</span>
+          </router-link>
         </div>
       </div>
     </div>

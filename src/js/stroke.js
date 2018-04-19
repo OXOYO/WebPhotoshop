@@ -1,7 +1,7 @@
 var Stroke = {
   // 擦除
   clear: function () {
-    this.context.clearRect(0, 0, 820, 520)
+    this.context.clearRect(0, 0, this.canvasLen[0], this.canvasLen[1])
   },
   // 设置RGBA
   rgba: function (a) {

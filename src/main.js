@@ -402,46 +402,48 @@ const store = new Vuex.Store({
         description: '点击减淡或加深按钮改变图像透明度。 尺寸：464x146'
       }
     ],
-    effectArr: [{
-      name: 'blackwhite',
-      title: '黑白 Ctrl+Shift+W'
-    }, {
-      name: 'opsitecolor',
-      title: '反色 Ctrl+Shift+I'
-    }, {
-      name: 'light',
-      title: '亮度/对比度'
-    }, {
-      name: 'blur',
-      title: '模糊 Ctrl+Shift+B'
-    }, {
-      name: 'cloud',
-      title: '雾化 Ctrl+Shift+M'
-    }, {
-      name: 'sharpen',
-      title: '锐化 Ctrl+Shift+S'
-    }, {
-      name: 'float',
-      title: '浮雕 Ctrl+Shift+F'
-    }, {
-      name: 'soft',
-      title: '柔化 Ctrl+Shift+T'
-    }, {
-      name: 'painting',
-      title: '油画 Ctrl+Shift+P'
-    }, {
-      name: 'wood',
-      title: '积木 Ctrl+Shift+D'
-    }, {
-      name: 'curve',
-      title: '雕刻 Ctrl+Shift+V'
-    }, {
-      name: 'turnold',
-      title: '怀旧 Ctrl+Shift+O'
-    }, {
-      name: 'new',
-      title: '新建'
-    }],
+    effectArr: [
+      {
+        name: 'blackwhite',
+        title: '黑白 Ctrl+Shift+W'
+      }, {
+        name: 'opsitecolor',
+        title: '反色 Ctrl+Shift+I'
+      }, {
+        name: 'light',
+        title: '亮度/对比度'
+      }, {
+        name: 'blur',
+        title: '模糊 Ctrl+Shift+B'
+      }, {
+        name: 'cloud',
+        title: '雾化 Ctrl+Shift+M'
+      }, {
+        name: 'sharpen',
+        title: '锐化 Ctrl+Shift+S'
+      }, {
+        name: 'float',
+        title: '浮雕 Ctrl+Shift+F'
+      }, {
+        name: 'soft',
+        title: '柔化 Ctrl+Shift+T'
+      }, {
+        name: 'painting',
+        title: '油画 Ctrl+Shift+P'
+      }, {
+        name: 'wood',
+        title: '积木 Ctrl+Shift+D'
+      }, {
+        name: 'curve',
+        title: '雕刻 Ctrl+Shift+V'
+      }, {
+        name: 'turnold',
+        title: '怀旧 Ctrl+Shift+O'
+      }, {
+        name: 'new',
+        title: '新建'
+      }
+    ],
     toolId: 8,
     globalColor: [0, 0, 0],
     canvasArr: [{

@@ -143,7 +143,7 @@ export default {
       this.$store.commit('changePopUpsKey', [prop, false])
     },
     add () {
-      this.$store.commit('addCanvasArr', this.canvasObj)
+      this.$store.commit('addCanvasArr', JSON.parse(JSON.stringify(this.canvasObj)))
       this.close('newCanvas')
     },
     changeInput (prop, key) {

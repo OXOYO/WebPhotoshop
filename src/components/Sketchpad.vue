@@ -5,7 +5,6 @@
       @mousemove="move($event)"
       @mouseup="up"
     >
-      <!-- 临时画板 -->
 			<canvas
         v-bind:class="{rubber: toolId===9||toolId===8}"
         v-for="(item, index) in canvasArr"
@@ -36,8 +35,6 @@ export default {
   data () {
     return {
       wrapper: '',
-      canvas: '',
-      context: '',
       imgData: '',
       endContext: '',
       strokeEvent: this.pen,
@@ -63,8 +60,40 @@ export default {
     }
   },
   computed: {
+    canvas: {
+      get () {
+        return this.canvasArr[this.nowCanvas].canvas
+      },
+      set (val) {
+        this.canvasArr[this.nowCanvas].canvas = val
+      }
+    },
+    context: {
+      get () {
+        return this.canvasArr[this.nowCanvas].context
+      },
+      set (val) {
+        this.canvasArr[this.nowCanvas].context = val
+      }
+    },
     newIndex () {
       return this.canvasArr[this.nowCanvas].index
+    },
+    // 当前画布imgData
+    canvasImageData: {
+      get () {
+        return this.canvasArr[this.nowCanvas].dataArr[this.newIndex].imgData
+      },
+      set (val) {
+        this.canvasArr[this.nowCanvas].dataArr[this.newIndex].imgData = val
+      }
+    },
+    // 当前画布的宽高
+    canvasLen () {
+      return [
+        this.canvasArr[this.nowCanvas].width,
+        this.canvasArr[this.nowCanvas].height
+      ]
     },
     // 监听亮度/对比度变化
     newLight () {
@@ -92,13 +121,17 @@ export default {
   },
   methods: {
     init: function (id) {
-      this.canvas = this.canvasArr[id].canvas = document.getElementById(id)
-      this.context = this.canvasArr[id].context = this.canvas.getContext('2d')
-      if (!this.canvasArr[this.nowCanvas].dataArr[this.newIndex].imgData) {
+      if (!this.canvas) {
+        this.canvas = document.getElementById(id)
+      }
+      if (!this.context) {
+        this.context = this.canvas.getContext('2d')
+      }
+      if (!this.canvasImageData) {
         this.getImageData()
-        this.canvasArr[this.nowCanvas].dataArr[this.newIndex].imgData = this.imgData
+        this.canvasImageData = this.imgData
       } else {
-        this.imgData = this.canvasArr[this.nowCanvas].dataArr[this.newIndex].imgData
+        this.imgData = this.canvasImageData
         this.putImageData()
       }
     },
@@ -162,7 +195,7 @@ export default {
     },
     // 获取像素信息
     getImageData: function () {
-      this.imgData = this.context.getImageData(0, 0, 820, 520)
+      this.imgData = this.context.getImageData(0, 0, this.canvasLen[0], this.canvasLen[1])
     },
     // 像素重绘
     putImageData: function () {
@@ -198,6 +231,7 @@ export default {
       },
       deep: true
     },
+    // 监听添加canvasArr元素
     canvasArr: function () {
       this.$nextTick(function () {
         // DOM 更新了
@@ -308,6 +342,10 @@ export default {
     }
     .rubber {
       cursor: url('../../src/assets/icons/rubber.png'), auto;
+    }
+    #temporaryCanvas {
+      position: absolute;
+      top: 0;
     }
     #moveBox {
       position: absolute;
