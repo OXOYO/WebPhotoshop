@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="position: absolute">
    <center>
       <h2>WebPhotoshop帮助文档</h2>
     </center>

@@ -1,10 +1,5 @@
 <template>
-  <div class="wptabs" v-show="showPops.showTools">
-    <div class="toolsTittle">
-      <img src="../../src/assets/icons/tools.png" height="16" width="16">
-      <span class="title">工具箱</span>
-      <span class="toolsCancle icon" @click="hideTools"></span>
-    </div>
+  <popSlot :name="'tools'" :title="'工具箱'" :prop="'showTools'">
     <div class="tools">
       <ul>
         <li v-for="(item, index) in toolList" :key="item.id" v-bind:title="item.title" @click="selectTool(index)" :class="{selectBk: toolId==index}">
@@ -13,15 +8,19 @@
       </ul>
       <div title="颜色选择器" class="colorSelect" :style="colorStyle" @click="isShow"></div>
     </div>
-  </div>
+  </popSlot>
 </template>
 
 <script>
 import { mapState } from 'vuex'
+import popSlot from './popSlot.vue'
 export default {
   name: 'wptabs',
   data () {
     return {}
+  },
+  components: {
+    popSlot
   },
   computed: {
     toolList () {
@@ -59,62 +58,43 @@ export default {
 </script>
 
 <style lang="scss">
-.wptabs {
-  position: absolute;
-  top: 4px;
-  left: 10px;
-  display: inline-block;
+.tools {
   width: 75px;
-  padding: 5px;
-  background: linear-gradient(to bottom,#EFF5FF 0,#A7C4EA 20%);
-  border: 1px solid #81ADE3;
-  border-radius: 5px;
-  .toolsTittle {
+  background-color: #fff;
+  border: 1px solid #5F98EA;
+  margin-top: 7px;
+  ul {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    .toolsCancle {
-      background: url('../../src/assets/default/panel_tools.png') no-repeat -16px 0px;
+    flex-wrap: wrap;
+    padding: 0;
+    margin: 0;
+    li {
+      list-style: none;
+      width: 28px;
+      height: 22px;
+      border: 1px solid #95B8E7;
+      border-radius: 5px;
+      margin: 3px;
       cursor: pointer;
-    }
-  }
-  .tools {
-    background-color: #fff;
-    border: 1px solid #5F98EA;
-    margin-top: 7px;
-    ul {
-      display: flex;
-      flex-wrap: wrap;
-      padding: 0;
-      margin: 0;
-      li {
-        list-style: none;
-        width: 28px;
-        height: 22px;
-        border: 1px solid #95B8E7;
-        border-radius: 5px;
-        margin: 3px;
-        cursor: pointer;
-        &:hover {
-          background-color: #eaf2ff;
-        }
-        img {
-          width: 16px;
-          height: 16px;
-          margin: 3px 6px;
-        }
-      }
-      .selectBk {
+      &:hover {
         background-color: #eaf2ff;
       }
+      img {
+        width: 16px;
+        height: 16px;
+        margin: 3px 6px;
+      }
     }
-    .colorSelect {
-      height: 50px;
-      border: 1px solid #41D0F7;
-      border-radius: 8px;
-      cursor: pointer;
-      margin-top: 2px;
+    .selectBk {
+      background-color: #eaf2ff;
     }
+  }
+  .colorSelect {
+    height: 50px;
+    border: 1px solid #41D0F7;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 2px;
   }
 }
 </style>

@@ -1,13 +1,8 @@
 <template>
   <div class="popUps" :class="{backColor: selectGrayscale!=='亮度/对比度'}" v-show="isShow">
     <!-- 新建 -->
-    <div class="newCanvas popStyle" v-show="popUpsKey.newCanvas">
-      <div class="recordTitle">
-        <span class="iconOne icon"></span>
-        <span class="iconTwo icon" @click="close('newCanvas')"></span>
-        <div class="iconTle title">新建</div>
-      </div>
-      <div class="recordWrapper">
+    <popSlot :name="'new'" :title="'新建'" :prop="'newCanvas'">
+      <div class="recordWrapper setCanvas">
         <div class="newCanvasInput">
           <div class="inputOne">
             <span>名称：</span>
@@ -37,18 +32,14 @@
           </div>
         </div>
         <div class="newCanvasButton">
-          <buttonIcon :type="'closeSecond'" :callback="close"></buttonIcon>
+          <buttonIcon :type="'closeSecond'" :callback="close" :prop="'newCanvas'"></buttonIcon>
           <buttonIcon :type="'defineSecond'" :callback="add"></buttonIcon>
         </div>
       </div>
-    </div>
+    </popSlot>
     <!-- 关闭 -->
-    <div class="closeCanvas popStyle" v-show="popUpsKey.closeCanvas">
-      <div class="recordTitle">
-        <span class="iconTwo icon" @click="close('closeCanvas')"></span>
-        <div class="iconTle title">确定</div>
-      </div>
-      <div class="recordWrapper">
+    <popSlot :title="'确定'" :prop="'closeCanvas'">
+      <div class="recordWrapper closeCanvas">
         <div class="closeCanvasTle">
           <span class="closeCanvasIcon"></span>
           <span class="closeCanvasCon">图片未保存，确定关闭？</span>
@@ -58,14 +49,10 @@
           <buttonIcon :type="'closeFirst'" :callback="close" :prop="'closeCanvas'"></buttonIcon>
         </div>
       </div>
-    </div>
+    </popSlot>
     <!-- 清空 -->
-    <div class="closeCanvas popStyle" v-show="popUpsKey.clearCanvas">
-      <div class="recordTitle">
-        <span class="iconTwo icon" @click="close('clearCanvas')"></span>
-        <div class="iconTle title">确定</div>
-      </div>
-      <div class="recordWrapper">
+    <popSlot :title="'确定'" :prop="'clearCanvas'">
+      <div class="recordWrapper closeCanvas">
         <div class="closeCanvasTle">
           <span class="closeCanvasIcon"></span>
           <span class="closeCanvasCon">确定清空当前画布？</span>
@@ -75,9 +62,28 @@
           <buttonIcon :type="'closeFirst'" :callback="close" :prop="'clearCanvas'"></buttonIcon>
         </div>
       </div>
-    </div>
+    </popSlot>
     <!-- fieldset -->
     <fieldSet></fieldSet>
+    <!-- 关于WebPhotoshop -->
+    <popSlot :name="'about'" :title="'确定'" :prop="'aboutWebPhotoshop'">
+      <div class="recordWrapper aboutWebPhotoshop">
+        <div align="center">
+          <img src="../../src/assets/icons/log.png" />
+          <span style="font-size: 30px;">WebPhotoshop</span>
+        </div>
+        <hr style="border: 0; background-color: #95B8E7; height: 1px;" />
+        <div>
+          <p>WebPhotoshop</p>
+          <p>版本：1.0(精简版)</p>
+          <p>发表日期：2018-04-19</p>
+          <p>Create by 毕金风</p>
+        </div>
+        <div class="btn">
+          <button @click="popUpsKey.aboutWebPhotoshop=false">确定</button>
+        </div>
+      </div>
+    </popSlot>
   </div>
 </template>
 
@@ -85,11 +91,13 @@
 import { mapState } from 'vuex'
 import buttonIcon from './selectmodules/buttonIcon.vue'
 import fieldSet from './selectmodules/fieldSet.vue'
+import popSlot from './popSlot.vue'
 export default {
   name: 'pop-ups',
   components: {
     buttonIcon,
-    fieldSet
+    fieldSet,
+    popSlot
   },
   data () {
     return {
@@ -140,7 +148,7 @@ export default {
   },
   methods: {
     close (prop) {
-      this.$store.commit('changePopUpsKey', [prop, false])
+      this.popUpsKey[prop] = false
     },
     add () {
       this.$store.commit('addCanvasArr', JSON.parse(JSON.stringify(this.canvasObj)))
@@ -175,99 +183,111 @@ export default {
   width: 100%;
   height: 100%;
   top: 0px;
+  overflow: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
-  .newCanvas {
-    width: 288px;
-    .recordTitle {
-      .iconOne {
-        background: url('../../src/assets/icons/new.png') no-repeat center center;
-      }
-    }
-    .recordWrapper {
-      height: 165px;
-      .newCanvasInput {
-        height: 130px;
-        &>div {
-          display: flex;
-          align-items: center;
-          padding: 5px 0 5px 45px;
-          span {
-            font-size: 13px;
-            padding-left: 5px;
-          }
-          .spinner {
-            border: 1px solid #95B8E7;
-            display: flex;
-            align-items: center;
-            .spinnerInput {
-              border: none;
-              padding: 0 2px;
-              width: 56px;
-              height: 20px;
-              outline: none;
-            }
-            .spinnerArrow {
-              width: 18px;
-              height: 20px;
-              background-color: #E0ECFF;
-              div {
-                height: 10px;
-              }
-              .spinnerArrowUp {
-                background: url('../../src/assets/default/spinner_arrows.png') no-repeat 1px center;
-              }
-              .spinnerArrowDown {
-                background: url('../../src/assets/default/spinner_arrows.png') no-repeat -15px center;
-              }
-            }
-          }
-        }
-        .inputOne {
-          input {
-            border: 1px solid #95B8E7;
-          }
-        }
-      }
-      .newCanvasButton {
-        height: 34px;
-        border-top: 1px solid #CBC6C6;
-        background: #F4F4F4;
+  // 新建画布
+  .setCanvas {
+    width: 286px;
+    height: 165px;
+    .newCanvasInput {
+      height: 130px;
+      &>div {
         display: flex;
         align-items: center;
-        justify-content: flex-end;
-        &>div {
-          padding-right: 5px;
+        padding: 5px 0 5px 45px;
+        span {
+          font-size: 13px;
+          padding-left: 5px;
         }
+        .spinner {
+          border: 1px solid #95B8E7;
+          display: flex;
+          align-items: center;
+          .spinnerInput {
+            border: none;
+            padding: 0 2px;
+            width: 56px;
+            height: 20px;
+            outline: none;
+          }
+          .spinnerArrow {
+            width: 18px;
+            height: 20px;
+            background-color: #E0ECFF;
+            div {
+              height: 10px;
+            }
+            .spinnerArrowUp {
+              background: url('../../src/assets/default/spinner_arrows.png') no-repeat 1px center;
+            }
+            .spinnerArrowDown {
+              background: url('../../src/assets/default/spinner_arrows.png') no-repeat -15px center;
+            }
+          }
+        }
+      }
+      .inputOne {
+        input {
+          border: 1px solid #95B8E7;
+        }
+      }
+    }
+    .newCanvasButton {
+      height: 34px;
+      border-top: 1px solid #CBC6C6;
+      background: #F4F4F4;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      &>div {
+        padding-right: 5px;
       }
     }
   }
   .closeCanvas {
-    width: 288px;
-    .recordWrapper {
-      height: 76px;
-      padding: 10px;
-      .closeCanvasTle {
-        .closeCanvasIcon {
-          display: inline-block;
-          width: 32px;
-          height: 32px;
-          background: url('../../src/assets/default/messager_icons.png') no-repeat scroll -32px 0;
-        }
-        .closeCanvasCon {
-          vertical-align: top;
-          font-size: 13px;
-          padding-left: 5px;
-        }
+    width: 266px;
+    height: 76px;
+    padding: 10px;
+    .closeCanvasTle {
+      .closeCanvasIcon {
+        display: inline-block;
+        width: 32px;
+        height: 32px;
+        background: url('../../src/assets/default/messager_icons.png') no-repeat scroll -32px 0;
       }
-      .closeCanvasBtn {
-        margin-top: 17px;
-        display: flex;
-        justify-content: center;
-        &>div {
-          padding: 0 5px;
-        }
+      .closeCanvasCon {
+        vertical-align: top;
+        font-size: 13px;
+        padding-left: 5px;
+      }
+    }
+    .closeCanvasBtn {
+      margin-top: 17px;
+      display: flex;
+      justify-content: center;
+      &>div {
+        padding: 0 5px;
+      }
+    }
+  }
+  // 关于WebPhotoshp
+  .aboutWebPhotoshop {
+    width: 570px;
+    height: 350px;
+    padding: 8px;
+    p {
+      font-size: medium;
+    }
+    .btn {
+      margin-top: 100px;
+      button {
+        float: right;
+        margin-right: 40px;
+        width: 80px;
+        height: 26px;
+        border: 1px solid #95B8E7;
       }
     }
   }

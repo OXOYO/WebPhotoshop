@@ -1,11 +1,6 @@
 <template>
-  <div class="record popStyle" v-show="showPops.showRecord">
-    <div class="recordTitle">
-      <span class="iconOne icon"></span>
-      <span class="iconTwo icon" @click="hideRecord"></span>
-      <div class="iconTle title">操作</div>
-    </div>
-    <div class="recordWrapper">
+  <popSlot :name="'history'" :title="'操作'" :prop="'showRecord'">
+    <div class="recordWrapper record">
       <div class="recordWrapperTle">
         <span v-bind:class="classObjectOne" @click="selectBox($event)">历史记录</span>
         <span v-bind:class="classObjectTwo" @click="selectBox($event)">图层管理</span>
@@ -48,11 +43,12 @@
         </div>
       </div>
     </div>
-  </div>
+  </popSlot>
 </template>
 
 <script>
 import { mapState } from 'vuex'
+import popSlot from './popSlot.vue'
 export default {
   name: 'record',
   data () {
@@ -60,6 +56,9 @@ export default {
       selectspan: '历史记录',
       value: true
     }
+  },
+  components: {
+    popSlot
   },
   computed: {
     repeatArr () {
@@ -131,70 +130,60 @@ export default {
 </script>
 
 <style lang="scss">
-.record {
-  position: absolute;
-  top: 4px;
-  right: 10px;
+.recordWrapper {
+  position: relative;
   width: 238px;
-  .recordTitle {
-    .iconOne {
-      background: url('../../src/assets/icons/history.png') no-repeat center center;
+  height: 164px;
+  .recordWrapperTle {
+    height: 29px;
+    background-color: #D3E3F2;
+    border-bottom: 1px solid #95B8E7;
+    span {
+      padding: 4.5px 10px;
+      border: 1px solid #95B8E7;
+      border-radius: 5px 5px 0 0;
+      background: -webkit-linear-gradient(top,#EFF5FF 0,#D3E3F2 100%);
+      float: left;
+      margin-left: 5px;
+      margin-top: 4px;
+      cursor: pointer;
+    }
+    .selectSpan {
+      background: linear-gradient(to bottom,#EFF5FF 0,#ffffff 100%);
+      border-bottom-color: #fff;
     }
   }
-  .recordWrapper {
-    position: relative;
-    height: 164px;
-    .recordWrapperTle {
-      height: 29px;
-      background-color: #D3E3F2;
-      border-bottom: 1px solid #95B8E7;
-      span {
-        padding: 4.5px 10px;
-        border: 1px solid #95B8E7;
-        border-radius: 5px 5px 0 0;
-        background: -webkit-linear-gradient(top,#EFF5FF 0,#D3E3F2 100%);
-        float: left;
-        margin-left: 5px;
-        margin-top: 4px;
-        cursor: pointer;
-      }
-      .selectSpan {
-        background: linear-gradient(to bottom,#EFF5FF 0,#ffffff 100%);
-        border-bottom-color: #fff;
-      }
-    }
-    .historyList, .levelList{
-      position: absolute;
-      top: 30px;
-      width: 100%;
-      .recordWrapperCon {
-        height: 110px;
-        overflow-y: auto;
-        cursor: pointer;
-        .recordWrapperConList {
-          height: 24px;
-          border: 1px solid #fff;
-          border-radius: 5px;
-          display: flex;
-          align-items: center;
-          img {
-            margin: 0 5px;
-          }
-        }
-        .selectStyle {
-          border-color: #95BCFC;
-          background-color: #eaf2ff;
-        }
-      }
-      .recordWrapperFot {
+  .historyList, .levelList{
+    position: absolute;
+    top: 30px;
+    width: 100%;
+    .recordWrapperCon {
+      height: 110px;
+      overflow-y: auto;
+      cursor: pointer;
+      .recordWrapperConList {
         height: 24px;
-        border-top: 1px solid #95B8E7;
+        border: 1px solid #fff;
+        border-radius: 5px;
         display: flex;
         align-items: center;
         img {
-          padding: 0px 6px;
-          cursor: pointer;
+          margin: 0 5px;
         }
+      }
+      .selectStyle {
+        border-color: #95BCFC;
+        background-color: #eaf2ff;
+      }
+    }
+    .recordWrapperFot {
+      height: 24px;
+      border-top: 1px solid #95B8E7;
+      display: flex;
+      align-items: center;
+      img {
+        padding: 0px 6px;
+        cursor: pointer;
       }
     }
   }

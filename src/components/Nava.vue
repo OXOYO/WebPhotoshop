@@ -374,11 +374,9 @@
           <span>反馈或报告</span>
         </div>
         <div class="navSep"></div>
-        <div class="navBox">
-          <router-link to="/about" target="_blank">
-            <img src="../../src/assets/icons/about.png" height="16" width="16">
-            <span>关于</span>
-          </router-link>
+        <div class="navBox" @click="popUpsKey['aboutWebPhotoshop']=true">
+          <img src="../../src/assets/icons/about.png" height="16" width="16">
+          <span>关于</span>
         </div>
       </div>
     </div>

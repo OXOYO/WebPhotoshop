@@ -486,7 +486,8 @@ const store = new Vuex.Store({
       newCanvas: false,
       closeCanvas: false,
       clearCanvas: false,
-      fieldset: false
+      fieldset: false,
+      aboutWebPhotoshop: false
     }
   },
   mutations: {

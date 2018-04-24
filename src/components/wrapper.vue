@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="borderBox">
     <div class="wrapper">
 			<div class="header">
 				<nava></nava>
@@ -7,8 +7,8 @@
 			<div class="main">
 				<alloption></alloption>
 				<div class="mainContent" :style="mainStyle">
-					<wptabs></wptabs>
 					<sketchpad></sketchpad>
+          <wptabs></wptabs>
           <record></record>
           <colorPicker></colorPicker>
 				</div>
@@ -75,6 +75,7 @@ export default {
 	height: 100vh - 116px;
 	background-color: rgb(201, 211, 226);
 	border-bottom: 1px solid #95B8E7;
+  overflow: hidden;
 }
 .icon {
   display: inline-block;

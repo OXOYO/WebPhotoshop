@@ -1,11 +1,6 @@
 <template>
-  <div class="fieldset popStyle" v-show="popUpsKey.fieldset">
-    <div class="recordTitle">
-      <span class="iconOne icon" :style="{background: 'url(' + requireUrl + ')'}"></span>
-      <span class="iconTwo icon" @click="close('fieldset')"></span>
-      <div class="iconTle title">{{dataObj.title}}</div>
-    </div>
-    <div class="recordWrapper">
+  <popSlot :name="'light'" :title="dataObj.title" :prop="'fieldset'">
+    <div class="recordWrapper fieldset">
       <div class="fieldsetTop">
         <fieldset class="fieldsetBox" v-for="(item, index) in dataObj.data" :key="item.id">
           <legend>{{item.title}}</legend>
@@ -39,12 +34,13 @@
         <buttonIcon :type="'defineSecond'" :callback="close" :prop="'fieldset'"></buttonIcon>
       </div>
     </div>
-  </div>
+  </popSlot>
 </template>
 
 <script>
 import { mapState } from 'vuex'
 import buttonIcon from './buttonIcon.vue'
+import popSlot from '../../components/popSlot.vue'
 export default {
   name: 'field-set',
   data () {
@@ -56,14 +52,12 @@ export default {
     }
   },
   components: {
-    buttonIcon
+    buttonIcon,
+    popSlot
   },
   computed: {
     dataObj () {
       return this.canvasArr[this.nowCanvas].lightObj
-    },
-    requireUrl () {
-      return require('../../../src/assets/icons/' + this.dataObj.name + '.png')
     },
     ...mapState([
       'popUpsKey',
@@ -126,86 +120,79 @@ export default {
 
 <style lang="scss">
 .fieldset {
+  height: 235px;
   width: 308px;
-  .recordTitle {
-    .iconOne {
-      float: left;
-    }
-  }
-  .recordWrapper {
-    height: 235px;
-    .fieldsetTop {
-      height: 200px;
-      overflow: hidden;
-      .fieldsetBox {
-        height: 80px;
-        margin: 10px;
-        padding: 0;
-        .controlBox {
+  .fieldsetTop {
+    height: 200px;
+    overflow: hidden;
+    .fieldsetBox {
+      height: 80px;
+      margin: 10px;
+      padding: 0;
+      .controlBox {
+        width: 260px;
+        margin: 0 auto;
+        margin-top: 10px;
+        .slider {
           width: 260px;
-          margin: 0 auto;
-          margin-top: 10px;
-          .slider {
-            width: 260px;
-            height: 22px;
-            position: relative;
-            .sliderInner {
-              height: 6px;
-              background: #C6DBF7;
-              border: 1px solid #95B8E7;
-              border-radius: 5px;
-              position: absolute;
-              width: 258px;
-              top: 7px;
+          height: 22px;
+          position: relative;
+          .sliderInner {
+            height: 6px;
+            background: #C6DBF7;
+            border: 1px solid #95B8E7;
+            border-radius: 5px;
+            position: absolute;
+            width: 258px;
+            top: 7px;
+          }
+          .sliderTip {
+            position: absolute;
+            width: 20px;
+            top: -15px;
+            transform: translateX(-50%);
+            .sliderNum {
+              text-align: center;
             }
-            .sliderTip {
-              position: absolute;
-              width: 20px;
-              top: -15px;
-              transform: translateX(-50%);
-              .sliderNum {
-                text-align: center;
-              }
-              .sliderTipRound {
-                height: 20px;
-                cursor: pointer;
-                background: url('../../../src/assets/default/slider_handle.png') no-repeat;
-              }
+            .sliderTipRound {
+              height: 20px;
+              cursor: pointer;
+              background: url('../../../src/assets/default/slider_handle.png') no-repeat;
             }
           }
-          .sliderRule {
-            position: relative;
-            width: 100%;
-            top: 2px;
-            span {
-              position: absolute;
-              display: inline-block;
-              height: 5px;
-              border-left: 1px solid #95B8E7;
-            }
+        }
+        .sliderRule {
+          position: relative;
+          width: 100%;
+          top: 2px;
+          span {
+            position: absolute;
+            display: inline-block;
+            height: 5px;
+            border-left: 1px solid #95B8E7;
           }
-          .sliderRulelabel {
-            position: relative;
-            top: 10px;
-            span {
-              position: absolute;
-              display: inline-block;
-              transform: translateX(-50%);
-            }
+        }
+        .sliderRulelabel {
+          position: relative;
+          top: 10px;
+          span {
+            position: absolute;
+            display: inline-block;
+            transform: translateX(-50%);
           }
         }
       }
     }
-    .fieldsetBtn {
-      height: 34px;
-      border-top: 1px solid #CBC6C6;
-      background-color: #F4F4F4;
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      &>div {
-        padding-right: 5px;
-      }
+  }
+  .fieldsetBtn {
+    height: 34px;
+    border-top: 1px solid #CBC6C6;
+    background-color: #F4F4F4;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    &>div {
+      padding-right: 5px;
     }
   }
 }
