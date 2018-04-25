@@ -410,9 +410,6 @@ const store = new Vuex.Store({
         name: 'opsitecolor',
         title: '反色 Ctrl+Shift+I'
       }, {
-        name: 'light',
-        title: '亮度/对比度'
-      }, {
         name: 'blur',
         title: '模糊 Ctrl+Shift+B'
       }, {
@@ -442,6 +439,12 @@ const store = new Vuex.Store({
       }, {
         name: 'new',
         title: '新建'
+      }, {
+        name: 'colorpalettes',
+        title: '色相/饱和度'
+      }, {
+        name: 'light',
+        title: '亮度/对比度'
       }
     ],
     toolId: 8,
@@ -453,8 +456,10 @@ const store = new Vuex.Store({
       context: '',
       canvas: '',
       imgData: '',
+      // 缩放比例
+      scaleProportion: 1,
       dataArr: [{
-        id: 34,
+        id: 33,
         imgData: ''
       }],
       index: 0,
@@ -506,6 +511,11 @@ const store = new Vuex.Store({
       light: false,
       // 色相/饱和度
       colorpalettes: false
+    },
+    // 工具区长宽
+    sketchpadOffset: {
+      width: 0,
+      height: 0
     }
   },
   mutations: {

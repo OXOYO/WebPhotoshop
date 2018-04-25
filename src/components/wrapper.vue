@@ -42,13 +42,16 @@ export default {
       return (() => {
         window.screenHeight = document.body.clientHeight
         that.screenHeight = window.screenHeight
+        this.sketchpadOffset.width = document.getElementsByClassName('sketchpad')[0].offsetWidth
+        this.sketchpadOffset.height = document.getElementsByClassName('sketchpad')[0].offsetHeight
       })()
     }
   },
   computed: {
     ...mapState([
       'tools',
-      'toolId'
+      'toolId',
+      'sketchpadOffset'
     ]),
     mainStyle: function () {
       var h = this.screenHeight - 117 + 'px'
@@ -72,7 +75,6 @@ export default {
 <style>
 .mainContent {
 	position: relative;
-	height: 100vh - 116px;
 	background-color: rgb(201, 211, 226);
 	border-bottom: 1px solid #95B8E7;
   overflow: hidden;

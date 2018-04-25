@@ -78,7 +78,7 @@ export default {
         this.num[0] = this.dataObj.data[0].num
         this.num[1] = this.dataObj.data[1].num
         var obj = {
-          id: 24,
+          id: this.name === 'light' ? 35 : 34,
           imgData: this.canvasArr[this.nowCanvas].imgData
         }
         this.$store.commit('changeDataArr', obj)

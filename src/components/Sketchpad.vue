@@ -4,6 +4,7 @@
       @mousedown="down()"
       @mousemove="move($event)"
       @mouseup="up"
+      :style="canvasBoxLen"
     >
 			<canvas
         v-bind:class="{rubber: toolId===9||toolId===8}"
@@ -13,6 +14,7 @@
         :width="item.width"
         :height="item.height"
         v-show="nowCanvas===index"
+        :style="scaleCanvas"
       ></canvas>
       <canvas
         id="moveBox"
@@ -98,6 +100,23 @@ export default {
         this.canvasArr[this.nowCanvas].height
       ]
     },
+    // 当前画布缩放比例
+    scaleProportion () {
+      return this.canvasArr[this.nowCanvas].scaleProportion
+    },
+    // 缩放画布
+    scaleCanvas () {
+      if (this.scaleProportion !== 1) {
+        return {width: this.canvasArr[this.nowCanvas].width * this.scaleProportion + 'px'}
+      }
+    },
+    // 画布最大长宽
+    canvasBoxLen () {
+      return {
+        maxWidth: this.sketchpadOffset.width - 380 + 'px',
+        maxHeight: this.sketchpadOffset.height - 20 + 'px'
+      }
+    },
     // 监听亮度/对比度变化
     newLight () {
       return [this.canvasArr[this.nowCanvas].light.data[0].num, this.canvasArr[this.nowCanvas].light.data[1].num]
@@ -119,7 +138,8 @@ export default {
       'canvasArr',
       'nowCanvas',
       'selectGrayscale',
-      'popUpsKey'
+      'popUpsKey',
+      'sketchpadOffset'
     ])
   },
   mounted () {
@@ -153,11 +173,11 @@ export default {
     move: function (event) {
       this.prvOffset = this.offset
       if (event.target.id === 'moveBox') {
-        this.offset[0] = event.offsetX + document.getElementById('moveBox').offsetLeft
-        this.offset[1] = event.offsetY + document.getElementById('moveBox').offsetTop
+        this.offset[0] = (event.offsetX + document.getElementById('moveBox').offsetLeft) / this.scaleProportion
+        this.offset[1] = (event.offsetY + document.getElementById('moveBox').offsetTop) / this.scaleProportion
       } else {
-        this.offset[0] = event.offsetX
-        this.offset[1] = event.offsetY
+        this.offset[0] = event.offsetX / this.scaleProportion
+        this.offset[1] = event.offsetY / this.scaleProportion
       }
       this.$store.commit('changeOffset', this.offset)
     },
@@ -233,7 +253,6 @@ export default {
     },
     // 将RGB转为HSV
     toHsv () {
-      console.log(1)
       var data = this.imgData.data
       for (let i = 0, n = data.length; i < n; i += 4) {
         var rgb = this.rgbTohsv({
@@ -249,7 +268,7 @@ export default {
     openChange: {
       handler (val) {
         if (val[0] || val[1]) {
-          this.prvImagaData = this.canvasArr[this.nowCanvas].dataArr[this.newIndex].imgData
+          this.prvImagaData = this.imgData
           if (val[1]) this.toHsv()
         }
       },
@@ -272,7 +291,8 @@ export default {
     newColorpalettes: {
       handler (val) {
         if (this.openChange[1]) {
-          var data = this.imgData.data
+          var outImgdata = this.context.createImageData(this.prvImagaData)
+          var data = outImgdata.data
           for (let i = 0, n = data.length; i < n; i += 4) {
             var j = i / 4 * 3
             var H = (this.hsvArr[j] + val[0]) > 360 ? 360 : ((this.hsvArr[j] + val[0]) < 0 ? 0 : this.hsvArr[j] + val[0])
@@ -285,7 +305,9 @@ export default {
             data[i] = rgb.R
             data[i + 1] = rgb.G
             data[i + 2] = rgb.B
+            data[i + 3] = 255
           }
+          this.imgData = outImgdata
           this.putImageData()
         }
       },
@@ -392,7 +414,8 @@ export default {
 		border: 1px solid #95B8E7;
 		box-shadow: 3px 3px 4px #95B8E7;
     position: relative;
-    overflow: hidden;
+    overflow: auto;
+    transform: translateX(-80px);
     canvas {
       cursor: crosshair;
       vertical-align: top;

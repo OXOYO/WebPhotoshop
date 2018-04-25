@@ -20,7 +20,7 @@
         <div class="colorActiveTop">
           <div class="colorActiveBox borderStyle">
             <div :style="{backgroundColor: '#'+transleteArr[2].color}"></div>
-            <div :style="{backgroundColor: '#000'}"></div>
+            <div :style="{backgroundColor: 'rgb('+prvColor[0]+','+prvColor[1]+','+prvColor[2]+')'}"></div>
           </div>
         </div>
         <div class="colorActiveSelect">

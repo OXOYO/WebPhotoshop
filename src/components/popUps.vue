@@ -109,6 +109,8 @@ export default {
         height: 520,
         context: '',
         canvas: '',
+        imgData: '',
+        scaleProportion: 1,
         dataArr: [{
           id: 34,
           imgData: ''

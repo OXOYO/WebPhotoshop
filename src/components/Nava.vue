@@ -434,8 +434,10 @@ export default {
               height: img.height,
               context: '',
               canvas: '',
+              imgData: '',
+              scaleProportion: 1,
               dataArr: [{
-                id: 34,
+                id: 33,
                 imgData: data
               }],
               index: 0,
