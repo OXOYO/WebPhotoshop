@@ -1,11 +1,11 @@
 <template>
-  <popSlot :name="'light'" :title="dataObj.title" :prop="'fieldset'">
+  <popSlot :name="name" :title="dataObj.title" :prop="name">
     <div class="recordWrapper fieldset">
       <div class="fieldsetTop">
         <fieldset class="fieldsetBox" v-for="(item, index) in dataObj.data" :key="item.id">
           <legend>{{item.title}}</legend>
           <div class="controlBox">
-            <div class="slider" @mousedown="moveRound($event, index)">
+            <div class="slider" :class="name+'slider'" @mousedown="moveRound($event, index)">
               <div class="sliderInner"></div>
               <div class="sliderTip" :style="{left: left[index]+'px'}">
                 <div class="sliderNum">{{item.num}}</div>
@@ -30,8 +30,8 @@
         </fieldset>
       </div>
       <div class="fieldsetBtn">
-        <buttonIcon :type="'closeSecond'" :callback="close" :prop="'fieldset'"></buttonIcon>
-        <buttonIcon :type="'defineSecond'" :callback="close" :prop="'fieldset'"></buttonIcon>
+        <buttonIcon :type="'closeSecond'" :callback="close" :prop="name"></buttonIcon>
+        <buttonIcon :type="'defineSecond'" :callback="close" :prop="name"></buttonIcon>
       </div>
     </div>
   </popSlot>
@@ -45,19 +45,19 @@ export default {
   name: 'field-set',
   data () {
     return {
-      clientX: [],
       index: '',
       left: [130, 130],
       num: [0, 0]
     }
   },
+  props: ['name'],
   components: {
     buttonIcon,
     popSlot
   },
   computed: {
     dataObj () {
-      return this.canvasArr[this.nowCanvas].lightObj
+      return this.canvasArr[this.nowCanvas][this.name]
     },
     ...mapState([
       'popUpsKey',
@@ -67,7 +67,7 @@ export default {
   },
   methods: {
     close (prop) {
-      if (prop === 'fieldset') {
+      if (prop === this.name) {
         // 取消
         this.dataObj.data[0].num = this.num[0]
         this.dataObj.data[1].num = this.num[1]
@@ -83,26 +83,25 @@ export default {
         }
         this.$store.commit('changeDataArr', obj)
       }
-      this.$store.commit('changePopUpsKey', ['fieldset', false])
-      this.$store.commit('changeSelectGrayscale', '')
+      this.$store.commit('changePopUpsKey', [this.name, false])
     },
     moveRound (event, index) {
+      var clientX = document.getElementsByClassName(this.name + 'slider')[index].getBoundingClientRect().left
       this.index = index
-      if (!this.clientX[index]) {
-        this.clientX[index] = document.getElementsByClassName('slider')[index].getBoundingClientRect().left
+      var obj = this
+      move(event)
+      document.body.addEventListener('mousemove', move)
+      document.body.addEventListener('mouseup', up)
+      function move (e) {
+        var x = e.clientX - clientX
+        if (x >= 0 && x <= 260) {
+          obj.left[index] = x
+          obj.leftToTip(x)
+        }
       }
-      this.roundMove(event)
-      document.body.addEventListener('mousemove', this.roundMove)
-      var a = this
-      document.body.addEventListener('mouseup', function () {
-        document.body.removeEventListener('mousemove', a.roundMove)
-      })
-    },
-    roundMove (e) {
-      var x = e.clientX - this.clientX[this.index]
-      if (x >= 0 && x <= 260) {
-        this.left[this.index] = x
-        this.leftToTip(x)
+      function up () {
+        document.body.removeEventListener('mousemove', move)
+        document.body.removeEventListener('mouseup', up)
       }
     },
     rulelabel (arr) {

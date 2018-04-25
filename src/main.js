@@ -459,17 +459,31 @@ const store = new Vuex.Store({
       }],
       index: 0,
       // 亮度/对比度
-      lightObj: {
+      light: {
         name: 'light',
         title: '亮度/对比度',
         data: [{
           title: '亮度',
           num: 0,
-          len: [-50, 50]
+          len: [-150, 150]
         }, {
           title: '对比度',
           num: 0,
-          len: [-50, 50]
+          len: [-100, 100]
+        }]
+      },
+      // 色相/饱和度
+      colorpalettes: {
+        name: 'colorpalettes',
+        title: '色相/饱和度',
+        data: [{
+          title: '色相',
+          num: 0,
+          len: [-180, 180]
+        }, {
+          title: '饱和度',
+          num: 0,
+          len: [-100, 100]
         }]
       }
     }],
@@ -486,8 +500,12 @@ const store = new Vuex.Store({
       newCanvas: false,
       closeCanvas: false,
       clearCanvas: false,
-      fieldset: false,
-      aboutWebPhotoshop: false
+      // 关于
+      aboutWebPhotoshop: false,
+      // 亮度/对比度
+      light: false,
+      // 色相/饱和度
+      colorpalettes: false
     }
   },
   mutations: {
@@ -532,7 +550,7 @@ const store = new Vuex.Store({
     changeSelectGrayscale (state, string) {
       state.selectGrayscale = string
       if (string === '亮度/对比度') {
-        state.popUpsKey.fieldset = true
+        state.popUpsKey.light = true
       }
     },
     changeglobalColor (state, arr) {

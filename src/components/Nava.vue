@@ -103,9 +103,13 @@
               <img src="../../src/assets/icons/autolevel.png" height="16" width="16">
               <span>色阶</span>
             </div>
-            <div class="navBox">
+            <div class="navBox" @click="changeImgShow('colorpalettes')">
               <img src="../../src/assets/icons/colorpalettes.png" height="16" width="16">
               <span>色相/饱和度</span>
+            </div>
+            <div class="navBox" @click="changeImgShow('light')">
+              <img src="../../src/assets/icons/light.png" height="16" width="16">
+              <span>亮度/对比度</span>
             </div>
           </div>
         </div>
@@ -202,10 +206,6 @@
           <img src="../../src/assets/icons/opsitecolor.png" height="16" width="16">
           <span>反色</span>
           <span>Ctrl+Shift+I</span>
-        </div>
-        <div class="navBox" @click="selectGrayscale('亮度/对比度')">
-          <img src="../../src/assets/icons/light.png" height="16" width="16">
-          <span>亮度/对比度</span>
         </div>
         <div class="navBox" @click="selectGrayscale('模糊')">
           <img src="../../src/assets/icons/blur.png" height="16" width="16">
@@ -439,17 +439,30 @@ export default {
                 imgData: data
               }],
               index: 0,
-              lightObj: {
+              light: {
                 name: 'light',
                 title: '亮度/对比度',
                 data: [{
                   title: '亮度',
                   num: 0,
-                  len: [-50, 50]
+                  len: [-150, 150]
                 }, {
                   title: '对比度',
                   num: 0,
-                  len: [-50, 50]
+                  len: [-100, 100]
+                }]
+              },
+              colorpalettes: {
+                name: 'colorpalettes',
+                title: '色相/饱和度',
+                data: [{
+                  title: '色相',
+                  num: 0,
+                  len: [-180, 180]
+                }, {
+                  title: '饱和度',
+                  num: 0,
+                  len: [-100, 100]
                 }]
               }
             }
@@ -458,6 +471,9 @@ export default {
           img.src = this.result
         }
       }
+    },
+    changeImgShow: function (string) {
+      this.popUpsKey[string] = true
     },
     selectGrayscale: function (string) {
       this.$store.commit('changeSelectGrayscale', string)

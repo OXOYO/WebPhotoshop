@@ -1,5 +1,5 @@
 <template>
-  <div class="popUps" :class="{backColor: selectGrayscale!=='亮度/对比度'}" v-show="isShow">
+  <div class="popUps" :class="{backColor: isAddClass}" v-show="isShow">
     <!-- 新建 -->
     <popSlot :name="'new'" :title="'新建'" :prop="'newCanvas'">
       <div class="recordWrapper setCanvas">
@@ -63,8 +63,10 @@
         </div>
       </div>
     </popSlot>
-    <!-- fieldset -->
-    <fieldSet></fieldSet>
+    <!-- 亮度/对比度 -->
+    <fieldSet :name="'light'"></fieldSet>
+    <!-- 色相/饱和度 -->
+    <fieldSet :name="'colorpalettes'"></fieldSet>
     <!-- 关于WebPhotoshop -->
     <popSlot :name="'about'" :title="'确定'" :prop="'aboutWebPhotoshop'">
       <div class="recordWrapper aboutWebPhotoshop">
@@ -135,6 +137,13 @@ export default {
       'nowCanvas',
       'selectGrayscale'
     ]),
+    isAddClass () {
+      if (this.popUpsKey.light || this.popUpsKey.colorpalettes) {
+        return false
+      } else {
+        return true
+      }
+    },
     isShow () {
       var a = false
       for (const key in this.popUpsKey) {

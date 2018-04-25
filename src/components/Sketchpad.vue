@@ -30,6 +30,7 @@
 import { mapState } from 'vuex'
 import Effect from '../js/effect.js'
 import stroke from '../js/stroke.js'
+import translateColorStyle from '../js/tranlateColorStyle'
 export default {
   name: 'sketchpad',
   data () {
@@ -56,7 +57,9 @@ export default {
         moveBoxLen: [0, 0],
         isShow: false,
         oldId: ''
-      }
+      },
+      // HSV
+      hsvArr: []
     }
   },
   computed: {
@@ -97,7 +100,15 @@ export default {
     },
     // 监听亮度/对比度变化
     newLight () {
-      return [this.canvasArr[this.nowCanvas].lightObj.data[0].num, this.canvasArr[this.nowCanvas].lightObj.data[1].num]
+      return [this.canvasArr[this.nowCanvas].light.data[0].num, this.canvasArr[this.nowCanvas].light.data[1].num]
+    },
+    // 监听色相/饱和度变化
+    newColorpalettes () {
+      return [this.canvasArr[this.nowCanvas].colorpalettes.data[0].num, this.canvasArr[this.nowCanvas].colorpalettes.data[1].num]
+    },
+    // 监听是否开始调整功能
+    openChange () {
+      return [this.popUpsKey.light, this.popUpsKey.colorpalettes]
     },
     ...mapState([
       // 映射 this.offset 为 store.state.offset
@@ -107,7 +118,8 @@ export default {
       'globalColor',
       'canvasArr',
       'nowCanvas',
-      'selectGrayscale'
+      'selectGrayscale',
+      'popUpsKey'
     ])
   },
   mounted () {
@@ -116,6 +128,9 @@ export default {
     this.wrapper = document.getElementsByClassName('canvasBox')[0]
     for (var prop in stroke) {
       this[prop] = stroke[prop]
+    }
+    for (let prop in translateColorStyle) {
+      this[prop] = translateColorStyle[prop]
     }
     this.strokeEvent = this.pen
   },
@@ -215,17 +230,62 @@ export default {
         imgData: this.imgData
       }
       this.$store.commit('changeDataArr', obj)
+    },
+    // 将RGB转为HSV
+    toHsv () {
+      console.log(1)
+      var data = this.imgData.data
+      for (let i = 0, n = data.length; i < n; i += 4) {
+        var rgb = this.rgbTohsv({
+          R: data[i],
+          G: data[i + 1],
+          B: data[i + 2]
+        })
+        this.hsvArr.push(rgb.H, rgb.S, rgb.V)
+      }
     }
   },
   watch: {
+    openChange: {
+      handler (val) {
+        if (val[0] || val[1]) {
+          this.prvImagaData = this.canvasArr[this.nowCanvas].dataArr[this.newIndex].imgData
+          if (val[1]) this.toHsv()
+        }
+      },
+      deep: true
+    },
     // 改变亮度/对比度
     newLight: {
       handler (val) {
-        if (this.selectGrayscale === '亮度/对比度') {
+        if (this.openChange[0]) {
           const Brightness = val[0]
           const Contrast = val[1]
           const data = this.prvImagaData
           this.imgData = this.effect.setLight(data, Brightness, Contrast)
+          this.putImageData()
+        }
+      },
+      deep: true
+    },
+    // 改变色相/饱和度
+    newColorpalettes: {
+      handler (val) {
+        if (this.openChange[1]) {
+          var data = this.imgData.data
+          for (let i = 0, n = data.length; i < n; i += 4) {
+            var j = i / 4 * 3
+            var H = (this.hsvArr[j] + val[0]) > 360 ? 360 : ((this.hsvArr[j] + val[0]) < 0 ? 0 : this.hsvArr[j] + val[0])
+            var S = (this.hsvArr[j + 1] + val[1] / 200) > 1 ? 1 : ((this.hsvArr[j + 1] + val[1] / 200) < 0 ? 0 : (this.hsvArr[j + 1] + val[1] / 200))
+            var rgb = this.hsvToRgb({
+              H: H,
+              S: S,
+              V: this.hsvArr[j + 2]
+            })
+            data[i] = rgb.R
+            data[i + 1] = rgb.G
+            data[i + 2] = rgb.B
+          }
           this.putImageData()
         }
       },
@@ -249,9 +309,6 @@ export default {
             break
           case '反色':
             this.drawImg('setInverted', 23)
-            break
-          case '亮度/对比度':
-            this.prvImagaData = this.canvasArr[this.nowCanvas].dataArr[this.newIndex].imgData
             break
           case '模糊':
             this.drawImg('gaussBlur', 25)
