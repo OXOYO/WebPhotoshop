@@ -38,6 +38,8 @@ export default {
   },
   mounted () {
     const that = this
+    this.sketchpadOffset.width = document.getElementsByClassName('sketchpad')[0].offsetWidth
+    this.sketchpadOffset.height = document.getElementsByClassName('sketchpad')[0].offsetHeight
     window.onresize = () => {
       return (() => {
         window.screenHeight = document.body.clientHeight

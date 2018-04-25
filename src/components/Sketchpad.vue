@@ -106,9 +106,7 @@ export default {
     },
     // 缩放画布
     scaleCanvas () {
-      if (this.scaleProportion !== 1) {
-        return {width: this.canvasArr[this.nowCanvas].width * this.scaleProportion + 'px'}
-      }
+      return {width: this.canvasArr[this.nowCanvas].width * this.scaleProportion + 'px'}
     },
     // 画布最大长宽
     canvasBoxLen () {
