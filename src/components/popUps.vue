@@ -86,6 +86,8 @@
         </div>
       </div>
     </popSlot>
+    <!-- 色彩曲线调整工具 -->
+    <colorCurve></colorCurve>
   </div>
 </template>
 
@@ -94,12 +96,14 @@ import { mapState } from 'vuex'
 import buttonIcon from './selectmodules/buttonIcon.vue'
 import fieldSet from './selectmodules/fieldSet.vue'
 import popSlot from './popSlot.vue'
+import colorCurve from './colorCurve.vue'
 export default {
   name: 'pop-ups',
   components: {
     buttonIcon,
     fieldSet,
-    popSlot
+    popSlot,
+    colorCurve
   },
   data () {
     return {
@@ -140,7 +144,7 @@ export default {
       'selectGrayscale'
     ]),
     isAddClass () {
-      if (this.popUpsKey.light || this.popUpsKey.colorpalettes) {
+      if (this.popUpsKey.light || this.popUpsKey.colorpalettes || this.popUpsKey.colorCurve) {
         return false
       } else {
         return true

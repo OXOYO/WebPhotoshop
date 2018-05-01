@@ -99,6 +99,10 @@
           <span class="navBoxHide icon"></span>
           <div class="navHide">
             <div class="navLine"></div>
+            <div class="navBox" @click="changeImgShow('colorCurve')">
+              <img src="../../src/assets/icons/colorCurve.png" height="16" width="16">
+              <span>曲线</span>
+            </div>
             <div class="navBox">
               <img src="../../src/assets/icons/autolevel.png" height="16" width="16">
               <span>色阶</span>
