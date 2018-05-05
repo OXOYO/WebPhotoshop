@@ -46,25 +46,24 @@
                 <canvas width="510" height="510" class="bCurve"></canvas>
                 <canvas width="510" height="510" class="bHistogram"></canvas>
               </div>
-              <div class="moveline">
+              <div class="moveline" :class="boderColor">
                 <!-- 上 -->
                 <div class="horizontal"
                   :style="{top: 255-inputOutY+'px'}"
                   @mousedown="moveHorizontal($event, 'top')"
-                  style="marginTop: 1px;"
                 >
+                  <div class="tran"></div>
                   <div class="line"></div>
                   <div class="tran"></div>
-                  <div class="tran left"></div>
                 </div>
                 <!-- 下 -->
                 <div class="horizontal"
                   :style="{top: 255-inputOutX+'px'}"
                   @mousedown="moveHorizontal($event, 'bottom')"
                 >
+                  <div class="tran"></div>
                   <div class="line"></div>
                   <div class="tran"></div>
-                  <div class="tran left"></div>
                 </div>
                 <!-- 左 -->
                 <div class="vertical"
@@ -73,17 +72,16 @@
                 >
                   <div class="tran"></div>
                   <div class="line"></div>
-                  <div class="tran top"></div>
+                  <div class="tran"></div>
                 </div>
                 <!-- 右 -->
                 <div class="vertical"
                   :style="{left: inputInY+'px'}"
                   @mousedown="moveHorizontal($event, 'right')"
-                  style="marginLeft: 0px"
                 >
                   <div class="tran"></div>
                   <div class="line"></div>
-                  <div class="tran top"></div>
+                  <div class="tran"></div>
                 </div>
               </div>
               <canvas width="510" height="510" class="rgbCurve"></canvas>
@@ -96,8 +94,17 @@
         </div>
       </div>
       <div class="curveButton">
-        <button>确定</button>
-        <button>取消</button>
+        <div class="buttonBox">
+          <button>确定</button>
+          <button>取消</button>
+        </div>
+        <div class="lastCurve">
+          <canvas
+            class="littleCurve"
+            :width="nowCanvasArr.width"
+            :height="nowCanvasArr.height"
+          ></canvas>
+        </div>
       </div>
     </div>
   </popSlot>
@@ -135,7 +142,8 @@ export default {
         g: [[0, 510], [0, 510]],
         b: [[0, 510], [0, 510]]
       },
-      openData: ''
+      // 预览画布
+      littleContext: ''
     }
   },
   mounted () {
@@ -184,6 +192,17 @@ export default {
           return [80, 90, 70, 100]
       }
     },
+    // boder-color
+    boderColor () {
+      switch (this.type) {
+        case 'R':
+          return 'borderRed'
+        case 'G':
+          return 'borderGreen'
+        case 'B':
+          return 'borderBlue'
+      }
+    },
     // 返回当前直方图X,Y关键点数组和canvas画布和直方图
     canvasArrayData () {
       switch (this.type) {
@@ -215,6 +234,7 @@ export default {
     isColorCurve (val) {
       if (val) {
         // 初始化
+        this.littleContext = document.getElementsByClassName('littleCurve')[0].getContext('2d')
         this.rgbCurveChange()
         this.strokeCurve(this.colorCurveContext.rgb[0])
         this.strokeCurve(this.colorCurveContext.r[0])
@@ -279,15 +299,40 @@ export default {
         a.canvasBox.removeEventListener('mouseup', up)
       }
     },
+    // 重心拉格朗日插值法
+    // getYpoint (x) {
+    //   var xAry = this.canvasArrayData[0]
+    //   var yAry = this.canvasArrayData[1]
+    //   // Wj
+    //   function getW (j) {
+    //     var w = 1
+    //     for (let i = 0, len = xAry.length; i < len; i++) {
+    //       if (i !== j) {
+    //         w *= xAry[j] - xAry[i]
+    //       }
+    //     }
+    //     return 1 / w
+    //   }
+    //   // L(x)
+    //   // l(X)
+    //   var l = 1
+    //   var L = 0
+    //   for (let i = 0, len = xAry.length; i < len; i++) {
+    //     l *= x - xAry[i]
+    //     L += getW(i) / (x - xAry[i]) * yAry[i]
+    //   }
+    //   return l * L
+    // },
     // 拉格朗日插值法在JS中的实现
     // 计算差值基函数的值
     getPolynomial (x, k) {
       var temp1 = 1
       var temp2 = 1
-      for (let i = 0, len = this.canvasArrayData[0].length; i < len; i++) {
+      var xAry = this.canvasArrayData[0]
+      for (let i = 0, len = xAry.length; i < len; i++) {
         if (i !== k) {
-          temp1 *= this.canvasArrayData[0][k] - this.canvasArrayData[0][i]
-          temp2 *= x - this.canvasArrayData[0][i]
+          temp1 *= xAry[k] - xAry[i]
+          temp2 *= x - xAry[i]
         }
       }
       return temp2 / temp1
@@ -295,9 +340,10 @@ export default {
     // 获取y轴坐标
     getYpoint (x) {
       var L = 0
-      for (let k = 0, len = this.canvasArrayData[1].length; k < len; k++) {
+      var yAry = this.canvasArrayData[1]
+      for (let k = 0, len = yAry.length; k < len; k++) {
         var lk = this.getPolynomial(x, k)
-        L += this.canvasArrayData[1][k] * lk
+        L += yAry[k] * lk
       }
       return L
     },
@@ -393,7 +439,7 @@ export default {
           outData.data[i + 1] = data[i + 1]
           outData.data[i + 2] = this.getYpoint(data[i + 2] * 2) / 2
         }
-        outData.data[i + 3] = 255
+        outData.data[i + 3] = data[i + 3]
         r[outData.data[i]]++
         g[outData.data[i + 1]]++
         b[outData.data[i + 2]]++
@@ -410,6 +456,7 @@ export default {
         this.strokeHistogram(b, this.colorCurveContext.b[1])
       }
       this.nowCanvasArr.context.putImageData(outData, 0, 0)
+      this.littleContext.putImageData(outData, 0, 0)
     },
     // 横竖线事件
     moveHorizontal (event, string) {
@@ -540,49 +587,61 @@ export default {
             &>div {
               position: absolute;
               .tran {
-                position: absolute;
                 width: 8px;
                 height: 8px;
                 background-color: #fff;
                 border: 1px solid #000;
-                transform: translateX(-50%) translateY(-50%) rotateZ(45deg)
+                transform: rotateZ(45deg);
               }
             }
             .horizontal {
-              height: 8px;
+              display: flex;
+              align-items: center;
+              transform: translateX(-5px) translateY(-50%);
               cursor: n-resize;
-              transform: translateY(-50%);
               .line {
-                margin-top: 3px;
-                width: 255px;
-                border-top: 1px solid #000;
-                border-bottom: 1px solid transparent;
-              }
-              .tran {
-                margin-top: -2px;
-              }
-              .left {
-                left: 254px;
+                width: 245px;
+                height: 1px;
+                background-color: #000;
               }
             }
             .vertical {
-              width: 8px;
+              display: flex;
+              justify-content: center;
+              flex-wrap: wrap;
+              width: 10px;
+              transform: translateY(-5px) translateX(-50%);
               cursor: e-resize;
-              transform: translateX(-50%);
-              margin-left: 1px;
               .line {
-                width: 0;
-                margin-left: 3px;
-                height: 255px;
-                border-left: 1px solid #000;
-                border-right: 1px solid transparent;
+                width: 1px;
+                height: 245px;
+                margin: 0 4.5px;
+                background-color:  #000;
               }
-              .tran {
-                margin-left: 3px;
-              }
-              .top {
-                top: 254px;
-              }
+            }
+          }
+          .borderRed {
+            .tran {
+              border-color:#ff0000 !important;
+            }
+            .line {
+              background-color: #ff0000 !important;
+            }
+          }
+          .borderGreen {
+            .line {
+              background-color: #00ff00 !important;
+            }
+            .tran {
+              border-color: #00ff00 !important;
+            }
+          }
+          .borderBlue {
+            .line {
+              background-color: #0000ff !important;
+            }
+            .tran {
+              border-color: #0000ff !important;
             }
           }
         }
@@ -597,14 +656,27 @@ export default {
     }
   }
   .curveButton {
-    padding-top: 30px;
-    button {
-      box-sizing: content-box;
-      width: 96px;
-      height: 16.8px;
-      padding: 2px 0;
-      margin-left: 8.5px;
-      margin-bottom: 15px;
+    padding: 10px;
+    margin-top: 20px;
+    .buttonBox {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      button {
+        box-sizing: content-box;
+        width: 96px;
+        height: 16.8px;
+        padding: 2px 0;
+        margin-bottom: 15px;
+      }
+    }
+    .lastCurve {
+      height: 196px;
+      display: flex;
+      align-items: center;
+      canvas {
+        width: 100%;
+      }
     }
   }
 }
