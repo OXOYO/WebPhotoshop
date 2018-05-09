@@ -3,10 +3,10 @@
     <div class="curveWrapper recordWrapper">
       <div class="curvetool">
         <div class="curveSelect">
-          <div class="selectOne" :class="{selectStyle: type==='RGB'}" @click="type='RGB'">RGB</div>
-          <div class="selectTwo" :class="{selectStyle: type==='R'}" @click="type='R'">R</div>
-          <div class="selectTwo" :class="{selectStyle: type==='G'}" @click="type='G'">G</div>
-          <div class="selectTwo" :class="{selectStyle: type==='B'}" @click="type='B'">B</div>
+          <div class="selectOne" :class="{selectStyle: type==='rgb'}" @click="changeType('rgb')">RGB</div>
+          <div class="selectTwo" :class="{selectStyle: type==='r'}" @click="changeType('r')">R</div>
+          <div class="selectTwo" :class="{selectStyle: type==='g'}" @click="changeType('g')">G</div>
+          <div class="selectTwo" :class="{selectStyle: type==='b'}" @click="changeType('b')">B</div>
         </div>
         <div class="curveBox">
           <div class="boxLeft">
@@ -41,7 +41,7 @@
                 <canvas width="510" height="510" class="gCurve"></canvas>
                 <canvas width="510" height="510" class="gHistogram"></canvas>
               </div>
-              <div class="canvasMask" v-show="type!=='RGB'" :style="{'z-index': zIndex[1]}"></div>
+              <div class="canvasMask" v-show="type!=='rgb'" :style="{'z-index': zIndex[1]}"></div>
               <div :style="{'z-index': zIndex[3]}">
                 <canvas width="510" height="510" class="bCurve"></canvas>
                 <canvas width="510" height="510" class="bHistogram"></canvas>
@@ -125,7 +125,7 @@ export default {
       inputOutX: 0,
       inputOutY: 255,
       // RGB/R/G/B
-      type: 'RGB',
+      type: 'rgb',
       // 直方图数据
       histogramData: '',
       // 各个画布和曲线context
@@ -143,7 +143,8 @@ export default {
         b: [[0, 510], [0, 510]]
       },
       // 预览画布
-      littleContext: ''
+      littleContext: '',
+      key: false
     }
   },
   mounted () {
@@ -182,37 +183,37 @@ export default {
     // z-index
     zIndex () {
       switch (this.type) {
-        case 'RGB':
+        case 'rgb':
           return [100, 90, 80, 70]
-        case 'R':
+        case 'r':
           return [100, 90, 80, 70]
-        case 'G':
+        case 'g':
           return [80, 90, 100, 70]
-        case 'B':
+        case 'b':
           return [80, 90, 70, 100]
       }
     },
     // boder-color
     boderColor () {
       switch (this.type) {
-        case 'R':
+        case 'r':
           return 'borderRed'
-        case 'G':
+        case 'g':
           return 'borderGreen'
-        case 'B':
+        case 'b':
           return 'borderBlue'
       }
     },
     // 返回当前直方图X,Y关键点数组和canvas画布和直方图
     canvasArrayData () {
       switch (this.type) {
-        case 'RGB':
+        case 'rgb':
           return this.xyAry.rgb.concat(this.colorCurveContext.rgb)
-        case 'R':
+        case 'r':
           return this.xyAry.r.concat(this.colorCurveContext.r)
-        case 'G':
+        case 'g':
           return this.xyAry.g.concat(this.colorCurveContext.g)
-        case 'B':
+        case 'b':
           return this.xyAry.b.concat(this.colorCurveContext.b)
       }
     },
@@ -223,6 +224,14 @@ export default {
     // 监听曲线调整工具的开启状况
     isColorCurve () {
       return this.popUpsKey.colorCurve
+    },
+    // 输入输出上下限
+    inputArr () {
+      return [this.inputInX, this.inputInY, this.inputOutX, this.inputOutY]
+    },
+    // 关键点数量
+    len () {
+      return this.xyAry[this.type][0].length - 1
     },
     ...mapState([
       'canvasArr',
@@ -236,14 +245,43 @@ export default {
         // 初始化
         this.littleContext = document.getElementsByClassName('littleCurve')[0].getContext('2d')
         this.rgbCurveChange()
-        this.strokeCurve(this.colorCurveContext.rgb[0])
-        this.strokeCurve(this.colorCurveContext.r[0])
-        this.strokeCurve(this.colorCurveContext.g[0])
-        this.strokeCurve(this.colorCurveContext.b[0])
+        this.type = 'rgb'
+        this.strokeCurve()
+        this.type = 'r'
+        this.strokeCurve()
+        this.type = 'g'
+        this.strokeCurve()
+        this.type = 'b'
+        this.strokeCurve()
+        this.type = 'rgb'
       }
+    },
+    // 监听输入输出上下限变化
+    inputArr: {
+      handler (val) {
+        if (!this.key) return
+        // 改变曲线的起始点和终点
+        this.xyAry[this.type][0][0] = val[0] * 2 // inputInX
+        this.xyAry[this.type][0][this.len] = val[1] * 2 // inputInY
+        this.xyAry[this.type][1][0] = val[2] * 2 // inputOutX
+        this.xyAry[this.type][1][this.len] = val[3] * 2 // inputoutY
+        // 绘制曲线，直方图
+        this.strokeCurve()
+        this.rgbCurveChange()
+      },
+      deep: true
     }
   },
   methods: {
+    // 改变RGB/R/G/B
+    changeType (type) {
+      this.type = type
+      this.key = false
+      this.inputInX = this.xyAry[type][0][0] / 2
+      this.inputInY = this.xyAry[type][0][this.len] / 2
+      this.inputOutX = this.xyAry[type][1][0] / 2
+      this.inputOutY = this.xyAry[type][1][this.len] / 2
+    },
     down (event) {
       var a = this
       var x = event.offsetX * 2
@@ -282,14 +320,16 @@ export default {
           a.canvasArrayData[0][point] = x
           a.canvasArrayData[1][point] = y
           prvKey = false
+          // 获取直方图数据, 绘制直方图
           a.rgbCurveChange()
-          a.strokeCurve(a.canvasArrayData[2])
+          a.strokeCurve()
         } else {
           a.canvasArrayData[0] = prvXAry
           a.canvasArrayData[1] = prvYAry
           if (!prvKey) {
+            // 获取直方图数据, 绘制直方图
             a.rgbCurveChange()
-            a.strokeCurve(a.canvasArrayData[2])
+            a.strokeCurve()
           }
           prvKey = true
         }
@@ -348,17 +388,29 @@ export default {
       return L
     },
     // 绘制曲线
-    strokeCurve (context) {
-      // 获取直方图数据, 绘制直方图
+    strokeCurve (arr) {
+      var context = this.canvasArrayData[2]
+      var xAry = this.canvasArrayData[0]
+      var yAry = this.canvasArrayData[1]
+      // 起点
+      var x1 = xAry[0]
+      var y1 = yAry[0]
+      // 终点
+      var x2 = xAry[this.len]
+      var y2 = yAry[this.len]
       context.clearRect(0, 0, 510, 510)
       context.beginPath()
-      context.moveTo(0, 510)
+      context.moveTo(0, 510 - y1)
+      context.lineTo(x1, 510 - y1)
       for (let i = 0; i <= 510; i++) {
-        var y = 510 - this.getYpoint(i)
-        y = y > 510 ? 510 : y
-        y = y < 0 ? 0 : y
-        context.lineTo(i, y)
+        if (i >= x1 && i <= x2) {
+          var y = this.getYpoint(i)
+          y = y > y2 ? y2 : y
+          y = y < y1 ? y1 : y
+          context.lineTo(i, 510 - y)
+        }
       }
+      context.lineTo(510, 510 - y2)
       context.stroke()
       context.closePath()
       // 循环关键点数组，绘制关键点
@@ -415,6 +467,12 @@ export default {
     },
     // 对画布imgData进行曲线调整, 获取直方图数据
     rgbCurveChange () {
+      // 起点
+      var x1 = this.xyAry[this.type][0][0] / 2
+      var y1 = this.xyAry[this.type][1][0] / 2
+      // 终点
+      var x2 = this.xyAry[this.type][0][this.len] / 2
+      var y2 = this.xyAry[this.type][1][this.len] / 2
       var data = this.nowCanvasArr.imgData.data
       if (!data) return
       var outData = this.nowCanvasArr.context.createImageData(this.nowCanvasArr.imgData)
@@ -422,35 +480,35 @@ export default {
       var g = new Array(256).fill(0)
       var b = new Array(256).fill(0)
       for (let i = 0, n = data.length; i < n; i += 4) {
-        if (this.type === 'RGB') {
-          outData.data[i] = this.getYpoint(data[i] * 2) / 2
-          outData.data[i + 1] = this.getYpoint(data[i + 1] * 2) / 2
-          outData.data[i + 2] = this.getYpoint(data[i + 2] * 2) / 2
-        } else if (this.type === 'R') {
-          outData.data[i] = this.getYpoint(data[i] * 2) / 2
+        if (this.type === 'rgb') {
+          outData.data[i] = data[i] <= x1 ? y1 : (data[i] >= x2 ? y2 : this.getYpoint(data[i] * 2) / 2)
+          outData.data[i + 1] = data[i + 1] <= x1 ? y1 : (data[i + 1] >= x2 ? y2 : this.getYpoint(data[i + 1] * 2) / 2)
+          outData.data[i + 2] = data[i + 2] <= x1 ? y1 : (data[i + 2] >= x2 ? y2 : this.getYpoint(data[i + 2] * 2) / 2)
+        } else if (this.type === 'r') {
+          outData.data[i] = data[i] <= x1 ? y1 : (data[i] >= x2 ? y2 : this.getYpoint(data[i] * 2) / 2)
           outData.data[i + 1] = data[i + 1]
           outData.data[i + 2] = data[i + 2]
-        } else if (this.type === 'G') {
+        } else if (this.type === 'g') {
           outData.data[i] = data[i]
-          outData.data[i + 1] = this.getYpoint(data[i + 1] * 2) / 2
+          outData.data[i + 1] = data[i + 1] <= x1 ? y1 : (data[i + 1] >= x2 ? y2 : this.getYpoint(data[i + 1] * 2) / 2)
           outData.data[i + 2] = data[i + 2]
         } else {
           outData.data[i] = data[i]
           outData.data[i + 1] = data[i + 1]
-          outData.data[i + 2] = this.getYpoint(data[i + 2] * 2) / 2
+          outData.data[i + 2] = data[i + 2] <= x1 ? y1 : (data[i + 2] >= x2 ? y2 : this.getYpoint(data[i + 2] * 2) / 2)
         }
         outData.data[i + 3] = data[i + 3]
         r[outData.data[i]]++
         g[outData.data[i + 1]]++
         b[outData.data[i + 2]]++
       }
-      if (this.type === 'RGB') {
+      if (this.type === 'rgb') {
         this.strokeHistogram(r, this.colorCurveContext.r[1])
         this.strokeHistogram(g, this.colorCurveContext.g[1])
         this.strokeHistogram(b, this.colorCurveContext.b[1])
-      } else if (this.type === 'R') {
+      } else if (this.type === 'r') {
         this.strokeHistogram(r, this.colorCurveContext.r[1])
-      } else if (this.type === 'G') {
+      } else if (this.type === 'g') {
         this.strokeHistogram(g, this.colorCurveContext.g[1])
       } else {
         this.strokeHistogram(b, this.colorCurveContext.b[1])
@@ -460,6 +518,7 @@ export default {
     },
     // 横竖线事件
     moveHorizontal (event, string) {
+      this.key = true
       var a = this
       var curveWrapper = document.getElementsByClassName('curveWrapper')[0]
       var top = document.getElementsByClassName('moveline')[0].getBoundingClientRect().top

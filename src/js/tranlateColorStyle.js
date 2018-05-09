@@ -73,14 +73,62 @@ var TranslateColorStyle = {
     hsv.H = (hsv.H >= 360) ? 0 : hsv.H
     return hsv
   },
-  // RGB转16进制
+  // HSL转RGB
+  hslToRgb: function (h, s, l) {
+    var r = 0
+    var g = 0
+    var b = 0
+    if (s === 0) {
+      r = g = b = l // achromatic
+    } else {
+      var hue2rgb = function hue2rgb (p, q, t) {
+        if (t < 0) t += 1
+        if (t > 1) t -= 1
+        if (t < 1 / 6) return p + (q - p) * 6 * t
+        if (t < 1 / 2) return q
+        if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6
+        return p
+      }
+      var q = l < 0.5 ? l * (1 + s) : l + s - l * s
+      var p = 2 * l - q
+      r = hue2rgb(p, q, h + 1 / 3)
+      g = hue2rgb(p, q, h)
+      b = hue2rgb(p, q, h - 1 / 3)
+    }
+    return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)]
+  },
+  // RGB转HSL
+  rgbToHsl: function (r, g, b) {
+    r /= 255
+    g /= 255
+    b /= 255
+    var max = Math.max(r, g, b)
+    var min = Math.min(r, g, b)
+    var h = (max + min) / 2
+    var s = (max + min) / 2
+    var l = (max + min) / 2
+    if (max === min) {
+      h = s = 0 // achromatic
+    } else {
+      var d = max - min
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min)
+      switch (max) {
+        case r: h = (g - b) / d + (g < b ? 6 : 0); break
+        case g: h = (b - r) / d + 2; break
+        case b: h = (r - g) / d + 4; break
+      }
+      h /= 6
+    }
+    return [h, s, l]
+  },
+  // 10进制转16进制
   rgbToHex: function (obj) {
     var R = Math.round(obj.R)
     var G = Math.round(obj.G)
     var B = Math.round(obj.B)
     return ((1 << 24) + (R << 16) + (G << 8) + B).toString(16).slice(1)
   },
-  // 16进制转RGB
+  // 16进制转10进制
   hexToRgb: function (string) {
     var rgb = {R: 0, G: 0, B: 0}
     rgb.R = parseInt('0x' + string.slice(0, 2))

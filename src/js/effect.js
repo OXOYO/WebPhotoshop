@@ -230,6 +230,7 @@ class Tools {
     var h = imgData.height
     var outputData = output.data
     var allGray = 0
+    // 获取图像的灰度平均值
     for (let i = 0, n = data.length; i < n; i += 4) {
       allGray = allGray + (0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2])
       outputData[i] = data[i]
