@@ -445,6 +445,9 @@ const store = new Vuex.Store({
       }, {
         name: 'light',
         title: '亮度/对比度'
+      }, {
+        name: 'colorCurve',
+        title: '曲线'
       }
     ],
     toolId: 8,
