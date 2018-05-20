@@ -1,14 +1,19 @@
 <template>
 	<div id="app">
     <router-view></router-view>
+		<mySvg></mySvg>
 	</div>
 </template>
 
 <script>
+import mySvg from './components/svg'
 export default {
   name: 'App',
   data () {
     return {}
+  },
+  components: {
+    mySvg
   }
 }
 </script>

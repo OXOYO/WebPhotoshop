@@ -103,7 +103,7 @@
               <img src="../../src/assets/icons/colorCurve.png" height="16" width="16">
               <span>曲线</span>
             </div>
-            <div class="navBox">
+            <div class="navBox" @click="changeImgShow('colorLevel')">
               <img src="../../src/assets/icons/autolevel.png" height="16" width="16">
               <span>色阶</span>
             </div>

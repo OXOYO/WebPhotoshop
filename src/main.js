@@ -515,7 +515,9 @@ const store = new Vuex.Store({
       // 色相/饱和度
       colorpalettes: false,
       // 色彩曲线
-      colorCurve: false
+      colorCurve: false,
+      // 色阶
+      colorLevel: false
     },
     // 工具区长宽
     sketchpadOffset: {

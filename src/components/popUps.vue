@@ -88,6 +88,8 @@
     </popSlot>
     <!-- 色彩曲线调整工具 -->
     <colorCurve></colorCurve>
+    <!-- 色阶 -->
+    <colorLevel></colorLevel>
   </div>
 </template>
 
@@ -97,13 +99,15 @@ import buttonIcon from './selectmodules/buttonIcon.vue'
 import fieldSet from './selectmodules/fieldSet.vue'
 import popSlot from './popSlot.vue'
 import colorCurve from './colorCurve.vue'
+import colorLevel from './colorLevel.vue'
 export default {
   name: 'pop-ups',
   components: {
     buttonIcon,
     fieldSet,
     popSlot,
-    colorCurve
+    colorCurve,
+    colorLevel
   },
   data () {
     return {

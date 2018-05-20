@@ -490,7 +490,7 @@ export default {
         r[outData.data[i]]++
         g[outData.data[i + 1]]++
         b[outData.data[i + 2]]++
-        var num = Math.round((outData.data[i] + outData.data[i + 1] + outData.data[i + 2]) / 3)
+        var num = Math.round(outData.data[i] * 0.299 + outData.data[i + 1] * 0.587 + outData.data[i + 2] * 0.114)
         rgb[num]++
       }
       if (type === 'rgb') {
