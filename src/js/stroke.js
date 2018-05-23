@@ -25,9 +25,9 @@ var Stroke = {
     this.context.lineTo(this.offset[0], this.offset[1])
     if (!obj) {
       obj = {
-        lineWidth: this.toolsArray[13][0].choose,
-        alpha: parseInt(this.toolsArray[13][1].choose) / 100,
-        lineCap: this.lineCap(this.toolsArray[13][2].choose),
+        lineWidth: this.toolsArray[0].choose,
+        alpha: parseInt(this.toolsArray[1].choose) / 100,
+        lineCap: this.lineCap(this.toolsArray[2].choose),
         isFill: false
       }
     }
@@ -39,9 +39,9 @@ var Stroke = {
     this.context.rect(this.beginPoint[0], this.beginPoint[1], this.offset[0] - this.beginPoint[0], this.offset[1] - this.beginPoint[1])
     if (!obj) {
       obj = {
-        lineWidth: this.toolsArray[15][0].choose,
-        alpha: parseInt(this.toolsArray[15][1].choose) / 100,
-        isFill: this.toolsArray[15][3].isCheck
+        lineWidth: this.toolsArray[0].choose,
+        alpha: parseInt(this.toolsArray[1].choose) / 100,
+        isFill: this.toolsArray[3].isCheck
       }
     }
     this.changeStyle(obj)
@@ -58,7 +58,7 @@ var Stroke = {
   // 绘制三角形
   strokeTriangular: function () {
     this.context.beginPath()
-    if (this.toolsArray[17][4].choose === '直角三角形') {
+    if (this.toolsArray[4].choose === '直角三角形') {
       this.context.moveTo(this.beginPoint[0], this.beginPoint[1])
       this.context.lineTo(this.beginPoint[0], this.offset[1])
       this.context.lineTo(this.offset[0], this.offset[1])
@@ -69,20 +69,20 @@ var Stroke = {
     }
     this.context.closePath()
     var obj = {
-      lineWidth: this.toolsArray[17][0].choose,
-      alpha: parseInt(this.toolsArray[17][1].choose) / 100,
-      isFill: this.toolsArray[17][3].isCheck
+      lineWidth: this.toolsArray[0].choose,
+      alpha: parseInt(this.toolsArray[1].choose) / 100,
+      isFill: this.toolsArray[3].isCheck
     }
     this.changeStyle(obj)
   },
   // 绘制椭圆
   strokeEllipse: function () {
     var obj = {
-      lineWidth: this.toolsArray[16][0].choose,
-      alpha: parseInt(this.toolsArray[16][1].choose) / 100,
-      isFill: this.toolsArray[16][3].isCheck
+      lineWidth: this.toolsArray[0].choose,
+      alpha: parseInt(this.toolsArray[1].choose) / 100,
+      isFill: this.toolsArray[3].isCheck
     }
-    if (this.toolsArray[16][4].isCheck) {
+    if (this.toolsArray[4].isCheck) {
       this.strokeArc(obj)
     } else {
       var x = (this.beginPoint[0] + this.offset[0]) / 2
@@ -107,9 +107,9 @@ var Stroke = {
   // 画笔
   pen: function () {
     var obj = {
-      lineWidth: this.toolsArray[8][0].choose,
-      alpha: parseInt(this.toolsArray[8][1].choose) / 100,
-      lineCap: this.lineCap(this.toolsArray[8][2].choose),
+      lineWidth: this.toolsArray[0].choose,
+      alpha: parseInt(this.toolsArray[1].choose) / 100,
+      lineCap: this.lineCap(this.toolsArray[2].choose),
       isFill: false
     }
     this.strokeLine(obj)
@@ -145,7 +145,7 @@ var Stroke = {
   strokeSubber: function () {
     this.context.globalCompositeOperation = 'destination-out'
     var obj = {
-      lineWidth: this.toolsArray[9][0].choose,
+      lineWidth: this.toolsArray[0].choose,
       isFill: false
     }
     this.strokeLine(obj)
@@ -158,7 +158,7 @@ var Stroke = {
     this.imgData = this.selectToolObj.imgData
     this.selectToolObj.isShow = true
     this.putImageData()
-    if (this.toolsArray[0][0].choose === '矩形') {
+    if (this.toolsArray[0].choose === '矩形') {
       this.selectToolObj.margin = [
         this.beginPoint[0] < this.offset[0] ? this.beginPoint[0] : this.offset[0],
         this.beginPoint[1] < this.offset[1] ? this.beginPoint[1] : this.offset[1]

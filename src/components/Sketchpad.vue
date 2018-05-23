@@ -1,30 +1,28 @@
 <template>
-	<div class="sketchpad">
-		<div class="canvasBox"
-      @mousedown="down()"
-      @mousemove="move($event)"
-      @mouseup="up"
-      :style="canvasBoxLen"
-    >
-			<canvas
-        v-bind:class="{rubber: toolId===9||toolId===8}"
-        v-for="(item, index) in canvasArr"
-        :key="index"
-        :id="index"
-        :width="item.width"
-        :height="item.height"
-        v-show="nowCanvas===index"
-        :style="scaleCanvas"
-      ></canvas>
-      <canvas
-        id="moveBox"
-        v-show="selectToolObj.isShow"
-        :style="{left: selectToolObj.margin[0] + 'px', top: selectToolObj.margin[1] + 'px'}"
-        :width="selectToolObj.moveBoxLen[0]"
-        :height="selectToolObj.moveBoxLen[1]"
-        :class="{cursorMove: toolId === 1}"
-      ></canvas>
-		</div>
+	<div
+    class="sketchpad"
+    @mousedown="down()"
+    @mousemove="move($event)"
+    @mouseup="up"
+  >
+    <canvas
+      v-bind:class="{rubber: toolId===9||toolId===8}"
+      v-for="(item, index) in canvasArr"
+      :key="index"
+      :id="index"
+      :width="item.width"
+      :height="item.height"
+      v-show="nowCanvas===index"
+      :style="scaleCanvas"
+    ></canvas>
+    <canvas
+      id="moveBox"
+      v-show="selectToolObj.isShow"
+      :style="{left: selectToolObj.margin[0] + 'px', top: selectToolObj.margin[1] + 'px'}"
+      :width="selectToolObj.moveBoxLen[0]"
+      :height="selectToolObj.moveBoxLen[1]"
+      :class="{cursorMove: toolId === 1}"
+    ></canvas>
 	</div>
 </template>
 
@@ -108,13 +106,6 @@ export default {
     scaleCanvas () {
       return {width: this.canvasArr[this.nowCanvas].width * this.scaleProportion + 'px'}
     },
-    // 画布最大长宽
-    canvasBoxLen () {
-      return {
-        maxWidth: this.sketchpadOffset.width - 380 + 'px',
-        maxHeight: this.sketchpadOffset.height - 20 + 'px'
-      }
-    },
     // 监听亮度/对比度变化
     newLight () {
       return [this.canvasArr[this.nowCanvas].light.data[0].num, this.canvasArr[this.nowCanvas].light.data[1].num]
@@ -127,23 +118,26 @@ export default {
     openChange () {
       return [this.popUpsKey.light, this.popUpsKey.colorpalettes]
     },
+    // 当前工具具体参数
+    toolsArray () {
+      return this.tools[this.toolId].parameter
+    },
     ...mapState([
       // 映射 this.offset 为 store.state.offset
       'offset',
-      'toolsArray',
       'toolId',
       'globalColor',
       'canvasArr',
       'nowCanvas',
       'selectGrayscale',
       'popUpsKey',
-      'sketchpadOffset'
+      'tools'
     ])
   },
   mounted () {
     this.init(0)
     this.effect = new Effect(this)
-    this.wrapper = document.getElementsByClassName('canvasBox')[0]
+    this.wrapper = document.getElementsByClassName('sketchpad')[0]
     for (var prop in stroke) {
       this[prop] = stroke[prop]
     }
@@ -368,32 +362,35 @@ export default {
       if (oldVal === 1) {
         this.putMoveData()
       }
-      switch (val) {
-        case 0:
+      switch (this.tools[val].name) {
+        case 'Select':
           this.strokeEvent = this.selectTool
           this.selectToolObj.imgData = this.imgData
           break
-        case 1:
+        case 'Move':
           this.strokeEvent = ''
           this.moveSelectTool()
           break
-        case 8:
+        case 'PaintBrush':
           this.strokeEvent = this.pen
           break
-        case 9:
+        case 'Eraser':
           this.strokeEvent = this.strokeSubber
           break
-        case 13:
+        case 'Line':
           this.strokeEvent = this.strokeLine
           break
-        case 15:
+        case 'Rectangle':
           this.strokeEvent = this.strokeRect
           break
-        case 16:
+        case 'Ellipse':
           this.strokeEvent = this.strokeEllipse
           break
-        case 17:
+        case 'Triangle':
           this.strokeEvent = this.strokeTriangular
+          break
+        default:
+          this.strokeEvent = ''
           break
       }
     }
@@ -403,37 +400,29 @@ export default {
 
 <style lang="scss">
 .sketchpad {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	height: 100%;
-	&>div {
-		background-color: White;
-		border: 1px solid #95B8E7;
-		box-shadow: 3px 3px 4px #95B8E7;
-    position: relative;
-    overflow: auto;
-    transform: translateX(-80px);
-    canvas {
-      cursor: crosshair;
-      vertical-align: top;
-    }
-    .rubber {
-      cursor: url('../../src/assets/icons/rubber.png'), auto;
-    }
-    #temporaryCanvas {
-      position: absolute;
-      top: 0;
-    }
-    #moveBox {
-      position: absolute;
-      z-index: 100;
-      border: 1px dashed #000;
-      transform: translateX(-1px) translateY(-1px);
-    }
-    .cursorMove {
-      cursor: Move;
-    }
-	}
+  background-color: White;
+  border: 1px solid #95B8E7;
+  box-shadow: 3px 3px 4px #95B8E7;
+  cursor: crosshair;
+  position: relative;
+  canvas {
+    vertical-align: top;
+  }
+  .rubber {
+    cursor: url('../../src/assets/icons/rubber.png'), auto;
+  }
+  #temporaryCanvas {
+    position: absolute;
+    top: 0;
+  }
+  #moveBox {
+    position: absolute;
+    z-index: 100;
+    border: 1px dashed #000;
+    transform: translateX(-1px) translateY(-1px);
+  }
+  .cursorMove {
+    cursor: Move;
+  }
 }
 </style>

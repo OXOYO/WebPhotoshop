@@ -14,7 +14,7 @@ function loadImg (file, img) {
     imgData: '',
     scaleProportion: 1,
     dataArr: [{
-      id: 33,
+      id: 24,
       imgData: data
     }],
     index: 0,

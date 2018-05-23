@@ -1,20 +1,35 @@
 <template>
   <div class="borderBox">
+    <!-- 窗口主体 -->
     <div class="wrapper">
-			<div class="header">
-				<nava></nava>
-			</div>
+      <!-- 导航栏 -->
+			<nava></nava>
+      <!-- 工具参数区 -->
+      <alloption></alloption>
+      <!-- 画布区 -->
 			<div class="main">
-				<alloption></alloption>
-				<div class="mainContent" :style="mainStyle">
-					<sketchpad></sketchpad>
-          <wptabs></wptabs>
-          <record></record>
-          <colorPicker></colorPicker>
-				</div>
+        <wptabs></wptabs>
+        <div class="mainCenter">
+          <div class="main-box">
+            <sketchpad></sketchpad>
+          </div>
+          <div class="main-pop" v-show="isShowPop">
+            <colorPicker></colorPicker>
+          </div>
+        </div>
+        <div class="mainRight">
+          <div class="layers-bar">
+            <div @click="operate=!operate">o p e r a t e</div>
+          </div>
+          <div class="layers" v-show="operate">
+            <record></record>
+          </div>
+        </div>
 			</div>
+      <!-- 底部 -->
 			<bot></bot>
 		</div>
+    <!-- 弹窗 -->
     <popUps></popUps>
   </div>
 </template>
@@ -33,31 +48,7 @@ export default {
   name: 'wrapper',
   data () {
     return {
-      screenHeight: document.body.clientHeight
-    }
-  },
-  mounted () {
-    const that = this
-    this.sketchpadOffset.width = document.getElementsByClassName('sketchpad')[0].offsetWidth
-    this.sketchpadOffset.height = document.getElementsByClassName('sketchpad')[0].offsetHeight
-    window.onresize = () => {
-      return (() => {
-        window.screenHeight = document.body.clientHeight
-        that.screenHeight = window.screenHeight
-        this.sketchpadOffset.width = document.getElementsByClassName('sketchpad')[0].offsetWidth
-        this.sketchpadOffset.height = document.getElementsByClassName('sketchpad')[0].offsetHeight
-      })()
-    }
-  },
-  computed: {
-    ...mapState([
-      'tools',
-      'toolId',
-      'sketchpadOffset'
-    ]),
-    mainStyle: function () {
-      var h = this.screenHeight - 117 + 'px'
-      return {height: h}
+      operate: true
     }
   },
   components: {
@@ -70,16 +61,78 @@ export default {
     colorPicker,
     popUps
   },
-  methods: {}
+  methods: {},
+  computed: {
+    isShowPop () {
+      if (this.popUpsKey.colorPicker) {
+        return true
+      } else {
+        return false
+      }
+    },
+    ...mapState([
+      'popUpsKey'
+    ])
+  }
 }
 </script>
 
-<style>
-.mainContent {
-	position: relative;
-	background-color: rgb(201, 211, 226);
-	border-bottom: 1px solid #95B8E7;
-  overflow: hidden;
+<style lang="scss">
+.borderBox {
+  position: absolute;
+  width: 100vw;
+  .wrapper {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    &>div {
+      min-width: 610px;
+    }
+    .main {
+      flex: 1;
+      display: flex;
+      border-bottom: 1px solid #95B8E7;
+      background-color: #EDF5FA;
+      .mainCenter {
+        flex: 1;
+        position: relative;
+        max-width: 100%;
+        overflow: auto;
+        .main-pop {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          top: 0;
+          left: 0;
+        }
+        .main-box {
+          height: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          background-color: rgb(201, 211, 226);
+        }
+      }
+      .mainRight {
+        display: flex;
+        .layers-bar {
+          width: 15px;
+          position: relative;
+          div {
+            cursor: pointer;
+            background-color: #EDF5FA;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%) translateX(-9px);
+            font-weight: bold;
+            padding: 5px;
+            border-radius: 10px;
+          }
+        }
+      }
+    }
+  }
 }
 .icon {
   display: inline-block;

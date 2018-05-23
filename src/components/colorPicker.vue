@@ -1,5 +1,5 @@
 <template>
-  <div class="colorWrapper" v-show="showColorPicker">
+  <div class="colorWrapper" v-show="popUpsKey.colorPicker">
     <div class="colorTitle">
       <span>颜色选择器</span>
       <span class="colorClose icon" @click="isShow"></span>
@@ -105,6 +105,10 @@ export default {
     })
   },
   computed: {
+    // 开关
+    showColorPicker () {
+      return this.popUpsKey.colorPicker
+    },
     transleteArr () {
       return [{
         H: Math.round(this.colorArr[0].H),
@@ -153,12 +157,12 @@ export default {
     },
     ...mapState([
       'globalColor',
-      'showColorPicker'
+      'popUpsKey'
     ])
   },
   methods: {
     isShow: function () {
-      this.$store.commit('changeShowColorPicker', false)
+      this.popUpsKey.colorPicker = false
     },
     closeBox: function () {
       this.$store.commit('changeglobalColor', this.prvColor)
@@ -279,15 +283,13 @@ export default {
 <style lang="scss">
 .colorWrapper {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translateY(-50%) translateX(-50%);
+  left: 0;
+  bottom: 0;
   width: 540px;
   height: 320px;
   background-color: #efefef;
   border: 1px outset #95B8E7;
   font-family: Arial, Helvetica, Sans-Serif;
-  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
   border-radius: 5px;
   .colorTitle {
     background-color: #ECF3FF;

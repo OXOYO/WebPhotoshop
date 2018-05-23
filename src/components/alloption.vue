@@ -5,7 +5,7 @@
         <img :src="tools[toolId].src">
         <span>{{tools[toolId].title}}</span>
       </li>
-      <li v-for="item in toolsArray[toolId]" :key="item.id">
+      <li v-for="item in tools[toolId].parameter" :key="item.id">
         <dropmodule v-if="item.key == 0" :optional-obj="item"></dropmodule>
         <selectmodule v-else-if="item.key == 3" :optional-obj="item"></selectmodule>
         <checkmodule v-else-if="item.key == 1" :optional-obj="item"></checkmodule>
@@ -37,17 +37,11 @@ export default {
   },
   computed: {
     ...mapState([
-      'toolsArray',
       'tools',
       'toolId',
       'canvasArr',
       'nowCanvas'
     ])
-  },
-  watch: {
-    toolsArray: function () {
-      this.$store.commit('changeToolsArray', this.toolsArray)
-    }
   },
   components: {
     checkmodule,
@@ -70,7 +64,7 @@ export default {
   .toolsDetail {
     height: 35px;
     margin: 0;
-    padding: 0;
+    padding: 0 0 0 8px;
     display: flex;
     align-items: center;
     li {

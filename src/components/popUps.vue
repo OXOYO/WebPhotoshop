@@ -120,7 +120,7 @@ export default {
         imgData: '',
         scaleProportion: 1,
         dataArr: [{
-          id: 34,
+          id: 24,
           imgData: ''
         }],
         index: 0,
@@ -148,7 +148,7 @@ export default {
       'selectGrayscale'
     ]),
     isAddClass () {
-      if (this.popUpsKey.light || this.popUpsKey.colorpalettes || this.popUpsKey.colorCurve) {
+      if (this.popUpsKey.light || this.popUpsKey.colorpalettes || this.popUpsKey.colorCurve || this.popUpsKey.colorLevel) {
         return false
       } else {
         return true
@@ -157,7 +157,7 @@ export default {
     isShow () {
       var a = false
       for (const key in this.popUpsKey) {
-        if (this.popUpsKey[key]) {
+        if (this.popUpsKey[key] && key !== 'colorPicker') {
           a = true
           break
         }
