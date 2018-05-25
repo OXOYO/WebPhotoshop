@@ -62,7 +62,7 @@ const store = new Vuex.Store({
         title: '曲线'
       }
     ],
-    toolId: 9,
+    toolId: 5,
     globalColor: [0, 0, 0],
     canvasArr: [{
       name: '新建画布1.png',

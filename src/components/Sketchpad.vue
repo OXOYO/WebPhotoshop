@@ -371,7 +371,7 @@ export default {
           this.strokeEvent = ''
           this.moveSelectTool()
           break
-        case 'PaintBrush':
+        case 'Pencil':
           this.strokeEvent = this.pen
           break
         case 'Eraser':
