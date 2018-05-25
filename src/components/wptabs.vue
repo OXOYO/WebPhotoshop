@@ -87,7 +87,6 @@ export default {
 <style lang="scss">
 .tools {
   width: 40px;
-  margin-top: 7px;
   ul {
     display: flex;
     flex-wrap: wrap;

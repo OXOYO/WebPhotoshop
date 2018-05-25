@@ -226,6 +226,8 @@ export default {
         border: 1px solid #000;
       }
       svg {
+        width: 10px;
+        height: 10px;
         transform: translateX(-4px);
       }
       .enterLevelBox {

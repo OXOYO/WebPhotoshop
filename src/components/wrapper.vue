@@ -19,9 +19,11 @@
         </div>
         <div class="mainRight">
           <div class="layers-bar">
-            <div @click="operate=!operate">o p e r a t e</div>
+            <svg @click="showPops.showRecord=!showPops.showRecord">
+              <use xlink:href="#arrow"></use>
+            </svg>
           </div>
-          <div class="layers" v-show="operate">
+          <div class="layers" v-show="showPops.showRecord">
             <record></record>
           </div>
         </div>
@@ -47,9 +49,7 @@ import { mapState } from 'vuex'
 export default {
   name: 'wrapper',
   data () {
-    return {
-      operate: true
-    }
+    return {}
   },
   components: {
     Nava,
@@ -71,7 +71,8 @@ export default {
       }
     },
     ...mapState([
-      'popUpsKey'
+      'popUpsKey',
+      'showPops'
     ])
   }
 }
@@ -99,6 +100,7 @@ export default {
         position: relative;
         max-width: 100%;
         overflow: auto;
+        background-color: #c9d3e2;
         .main-pop {
           position: absolute;
           width: 100%;
@@ -111,7 +113,6 @@ export default {
           display: flex;
           justify-content: center;
           align-items: center;
-          background-color: rgb(201, 211, 226);
         }
       }
       .mainRight {
@@ -119,15 +120,10 @@ export default {
         .layers-bar {
           width: 15px;
           position: relative;
-          div {
+          svg {
+            width: 15px;
+            height: 12px;
             cursor: pointer;
-            background-color: #EDF5FA;
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%) translateX(-9px);
-            font-weight: bold;
-            padding: 5px;
-            border-radius: 10px;
           }
         }
       }
