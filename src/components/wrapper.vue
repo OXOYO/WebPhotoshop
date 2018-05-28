@@ -10,6 +10,7 @@
 			<div class="main">
         <wptabs></wptabs>
         <div class="mainCenter">
+          <ruler class="main-ruler"></ruler>
           <div class="main-box">
             <sketchpad></sketchpad>
           </div>
@@ -45,6 +46,7 @@ import Bot from './Bot.vue'
 import record from './record.vue'
 import colorPicker from './colorPicker.vue'
 import popUps from './popUps.vue'
+import ruler from './ruler.vue'
 import { mapState } from 'vuex'
 export default {
   name: 'wrapper',
@@ -59,7 +61,8 @@ export default {
     Bot,
     record,
     colorPicker,
-    popUps
+    popUps,
+    ruler
   },
   methods: {},
   computed: {
@@ -99,16 +102,24 @@ export default {
         flex: 1;
         position: relative;
         max-width: 100%;
-        overflow: auto;
         background-color: #c9d3e2;
+        border-left: 1px solid #95B8E7;
+        border-right: 1px solid #95B8E7;
         .main-pop {
           position: absolute;
           width: 100%;
           height: 100%;
           top: 0;
           left: 0;
+          z-index: 3;
+        }
+        .main-ruler {
+          position: absolute;
         }
         .main-box {
+          position: absolute;
+          overflow: auto;
+          width: 100%;
           height: 100%;
           display: flex;
           justify-content: center;

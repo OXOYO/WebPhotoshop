@@ -131,7 +131,7 @@
           <span class="navBoxHide icon"></span>
           <div class="navHide">
             <div class="navLine"></div>
-            <div class="navBox">
+            <div class="navBox" @click="rotateCanvas(90)">
               <img src="../../src/assets/icons/rotate180.png" height="16" width="16">
               <span>旋转180度</span>
             </div>
@@ -395,6 +395,7 @@
 <script>
 import { mapState } from 'vuex'
 import loadImg from '../js/loadImg'
+import rotate from '../js/rotate'
 export default {
   name: 'nava',
   data () {
@@ -439,6 +440,10 @@ export default {
     }, false)
   },
   methods: {
+    // 旋转画布
+    rotateCanvas (angle) {
+      rotate(angle)
+    },
     // 打开
     openImg: function () {
       var inputObj = document.createElement('input')

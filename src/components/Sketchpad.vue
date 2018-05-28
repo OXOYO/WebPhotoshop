@@ -36,7 +36,6 @@ export default {
   data () {
     return {
       wrapper: '',
-      imgData: '',
       endContext: '',
       strokeEvent: this.pen,
       prtPoint: [100, 100],
@@ -63,6 +62,14 @@ export default {
     }
   },
   computed: {
+    imgData: {
+      get () {
+        return this.canvasArr[this.nowCanvas].imgData
+      },
+      set (val) {
+        this.canvasArr[this.nowCanvas].imgData = val
+      }
+    },
     canvas: {
       get () {
         return this.canvasArr[this.nowCanvas].canvas
@@ -401,7 +408,6 @@ export default {
 <style lang="scss">
 .sketchpad {
   background-color: White;
-  border: 1px solid #95B8E7;
   box-shadow: 3px 3px 4px #95B8E7;
   cursor: crosshair;
   position: relative;

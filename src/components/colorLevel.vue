@@ -55,7 +55,7 @@
         </div>
       </div>
       <div class="levelRight">
-        <button>确定</button>
+        <button @click="run">确定</button>
         <button>取消</button>
       </div>
     </div>
@@ -82,6 +82,10 @@ export default {
     popSlot
   },
   computed: {
+    // 当前画布数组
+    nowCanvasArr () {
+      return this.canvasArr[this.nowCanvas]
+    },
     ...mapState([
       'canvasArr',
       'nowCanvas',
@@ -184,6 +188,30 @@ export default {
           }
         }
       }
+    },
+    // 色阶调节
+    gamma (x) {
+      var b = 0
+      var w = 255
+      var g = 0.51
+      if (x < b) {
+        return 0
+      } else if (x > w) {
+        return 255
+      } else {
+        return Math.pow((x - b) / (w - b), 1 / g) * 255
+      }
+    },
+    run () {
+      var imgData = this.nowCanvasArr.imgData
+      var outData = this.nowCanvasArr.context.createImageData(imgData)
+      for (let i = 0, n = imgData.data.length; i < n; i += 4) {
+        outData.data[i] = this.gamma(imgData.data[i])
+        outData.data[i + 1] = this.gamma(imgData.data[i + 1])
+        outData.data[i + 2] = this.gamma(imgData.data[i + 2])
+        outData.data[i + 3] = 255
+      }
+      this.nowCanvasArr.context.putImageData(outData, 0, 0)
     }
   }
 }
