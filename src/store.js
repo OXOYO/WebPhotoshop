@@ -103,8 +103,12 @@ export default new Vuex.Store({
     selectGrayscale: '',
     // 窗口
     showPops: {
-      showRecord: false,
+      showRecord: true,
       showTools: true
+    },
+    // 标尺，网格
+    ruler: {
+      ruler: false
     },
     // 各种弹窗开启
     popUpsKey: {

@@ -80,6 +80,7 @@
           <p>版本：1.0(精简版)</p>
           <p>发表日期：2018-04-19</p>
           <p>Create by 毕金风</p>
+          <p>QQ: 2804673379</p>
         </div>
         <div class="btn">
           <button @click="popUpsKey.aboutWebPhotoshop=false">确定</button>
@@ -199,6 +200,7 @@ export default {
 }
 .popUps {
   position: absolute;
+  z-index: 100;
   width: 100%;
   height: 100%;
   top: 0px;
@@ -300,7 +302,9 @@ export default {
       font-size: medium;
     }
     .btn {
-      margin-top: 100px;
+      position: absolute;
+      right: 0;
+      bottom: 30px;
       button {
         float: right;
         margin-right: 40px;

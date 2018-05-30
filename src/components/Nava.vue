@@ -148,11 +148,11 @@
               <span>旋转任意角度</span>
             </div>
             <div class="navSep"></div>
-            <div class="navBox">
+            <div class="navBox" @click="flipCanvas(0)">
               <img src="../../src/assets/icons/horizonrotate.png" height="16" width="16">
               <span>水平翻转</span>
             </div>
-            <div class="navBox">
+            <div class="navBox" @click="flipCanvas(1)">
               <img src="../../src/assets/icons/verticalrotate.png" height="16" width="16">
               <span>垂直翻转</span>
             </div>
@@ -295,7 +295,7 @@
           <span>Ctrl+Down</span>
         </div>
         <div class="navSep"></div>
-        <div class="navBox">
+        <div class="navBox" @click="ruler.ruler=!ruler.ruler">
           <img src="../../src/assets/icons/ruler.png" height="16" width="16">
           <span>标尺</span>
         </div>
@@ -396,6 +396,7 @@
 import { mapState } from 'vuex'
 import loadImg from '../js/loadImg'
 import rotate from '../js/rotate'
+import flip from '../js/flip'
 export default {
   name: 'nava',
   data () {
@@ -410,7 +411,8 @@ export default {
       'canvasArr',
       'nowCanvas',
       'popUpsKey',
-      'showPops'
+      'showPops',
+      'ruler'
     ])
   },
   mounted () {
@@ -443,6 +445,10 @@ export default {
     // 旋转画布
     rotateCanvas (angle) {
       rotate(angle)
+    },
+    // 翻转画布
+    flipCanvas (num) {
+      flip(num)
     },
     // 打开
     openImg: function () {

@@ -239,30 +239,24 @@ class Tools {
       outputData[i + 3] = data[i + 3]
     }
     var Threshold = allGray / (w * h)
-    if (Contrast >= 0) {
-      // 先调整亮度，再调整对比度
-      for (let i = 0, n = outputData.length; i < n; i += 4) {
-        // 调整亮度
-        outputData[i] = outputData[i] + Brightness
-        outputData[i + 1] = outputData[i + 1] + Brightness
-        outputData[i + 2] = outputData[i + 2] + Brightness
-        // 调整对比度
-        outputData[i] = outputData[i] + (outputData[i] - Threshold) * (1 / (1 - Contrast / 255) - 1)
-        outputData[i + 1] = outputData[i + 1] + (outputData[i + 1] - Threshold) * (1 / (1 - Contrast / 255) - 1)
-        outputData[i + 2] = outputData[i + 2] + (outputData[i + 2] - Threshold) * (1 / (1 - Contrast / 255) - 1)
+    for (let i = 0, n = outputData.length; i < n; i += 4) {
+      if (Contrast >= 0) {
+        brightness(i)
+        contrast(1 / (1 - Contrast / 255) - 1, i)
+      } else {
+        contrast(Contrast / 255, i)
+        brightness(i)
       }
-    } else {
-      // 先调整对比度，再调整亮度
-      for (let i = 0, n = data.length; i < n; i += 4) {
-        // 调整对比度
-        outputData[i] = outputData[i] + (outputData[i] - Threshold) * Contrast / 255
-        outputData[i + 1] = outputData[i + 1] + (outputData[i + 1] - Threshold) * Contrast / 255
-        outputData[i + 2] = outputData[i + 2] + (outputData[i + 2] - Threshold) * Contrast / 255
-        // 调整亮度
-        outputData[i] = outputData[i] + Brightness
-        outputData[i + 1] = outputData[i + 1] + Brightness
-        outputData[i + 2] = outputData[i + 2] + Brightness
-      }
+    }
+    function contrast (con, i) { // 调节对比度
+      outputData[i] = outputData[i] + (outputData[i] - Threshold) * con
+      outputData[i + 1] = outputData[i + 1] + (outputData[i + 1] - Threshold) * con
+      outputData[i + 2] = outputData[i + 2] + (outputData[i + 2] - Threshold) * con
+    }
+    function brightness (i) { // 调节亮度
+      outputData[i] = outputData[i] + Brightness
+      outputData[i + 1] = outputData[i + 1] + Brightness
+      outputData[i + 2] = outputData[i + 2] + Brightness
     }
     return output
   }

@@ -1,5 +1,5 @@
 <template>
-  <div class="ruler_wrapper">
+  <div class="ruler_wrapper" v-show="ruler.ruler">
     <div class="ruler_corner"></div>
     <div class="ruler_x">
       <canvas class="x_canvas" height="15" :width="w"></canvas>
@@ -18,8 +18,8 @@ export default {
   name: 'ruler',
   data () {
     return {
-      w: 2000,
-      h: 2000,
+      w: '',
+      h: '',
       xContext: '',
       yContext: '',
       // 间隔
@@ -32,7 +32,9 @@ export default {
   computed: {
     ...mapState([
       'offset',
-      'nowCanvas'
+      'nowCanvas',
+      'showPops',
+      'ruler'
     ])
   },
   mounted () {
@@ -44,19 +46,24 @@ export default {
   },
   methods: {
     init () {
+      this.w = document.getElementsByClassName('main-box')[0].offsetWidth
+      this.h = document.getElementsByClassName('main-box')[0].offsetHeight
       this.l = document.getElementsByClassName('sketchpad')[0].offsetLeft
       this.t = document.getElementsByClassName('sketchpad')[0].offsetTop
-      this.xContext = document.getElementsByClassName('x_canvas')[0].getContext('2d')
-      this.yContext = document.getElementsByClassName('y_canvas')[0].getContext('2d')
-      this.xContext.strokeStyle = '#95B8E7'
-      this.yContext.strokeStyle = '#95B8E7'
-      this.xContext.fillStyle = '#95B8E7'
-      this.yContext.fillStyle = '#95B8E7'
-      this.xContext.textBaseline = 'hanging'
-      this.xContext.font = '10px Arial'
-      this.yContext.textBaseline = 'hanging'
-      this.yContext.font = '10px Arial'
-      this.stroke()
+      var a = this
+      setTimeout(function () {
+        a.xContext = document.getElementsByClassName('x_canvas')[0].getContext('2d')
+        a.yContext = document.getElementsByClassName('y_canvas')[0].getContext('2d')
+        a.xContext.strokeStyle = '#95B8E7'
+        a.yContext.strokeStyle = '#95B8E7'
+        a.xContext.fillStyle = '#95B8E7'
+        a.yContext.fillStyle = '#95B8E7'
+        a.xContext.textBaseline = 'hanging'
+        a.xContext.font = '10px Arial'
+        a.yContext.textBaseline = 'hanging'
+        a.yContext.font = '10px Arial'
+        a.stroke()
+      }, 1)
     },
     stroke () {
       this.xContext.clearRect(0, 0, this.w, 15)
@@ -119,6 +126,12 @@ export default {
       setTimeout(function () {
         a.init()
       }, 100)
+    },
+    showPops: {
+      handler () {
+        this.init()
+      },
+      deep: true
     }
   }
 }
@@ -132,6 +145,8 @@ export default {
   &>div {
     position: absolute;
     background-color: #EDF5FA;
+    overflow: hidden;
+    z-index: 1;
   }
   .ruler_corner {
     width: 15px;
@@ -142,31 +157,25 @@ export default {
   .ruler_x {
     height: 15px;
     width: 100%;
-    z-index: 1;
     border-bottom: 1px solid #95B8E7;
-    overflow: hidden;
-    position: relative;
     .x_bar {
       top: 0;
       position: absolute;
       width: 2px;
       height: 10px;
-      background-color: #007fff;
+      background-color: #95BCFC;
     }
   }
   .ruler_y {
     width: 15px;
     height: 100%;
-    z-index: 1;
     border-right: 1px solid #95B8E7;
-    overflow: hidden;
-    position: relative;
     .y_bar {
       position: absolute;
       left: 0;
       width: 10px;
       height: 2px;
-      background-color: #007fff;
+      background-color: #95BCFC;
     }
   }
 }
