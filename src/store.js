@@ -126,7 +126,9 @@ export default new Vuex.Store({
       // 色阶
       colorLevel: false,
       // 色彩选择器
-      colorPicker: false
+      colorPicker: false,
+      // 登录
+      login: false
     }
   },
   mutations: {

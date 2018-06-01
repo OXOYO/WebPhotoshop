@@ -385,9 +385,18 @@
       </div>
     </div>
     <div class="navControl">
-      <img src="../../src/assets/default/closeScreen.png" alt="X" class="ctrClose" @click="closeScreen">
-      <img src="../../src/assets/default/fullScreen.png" alt="" class="ctrScreen" @click="fullScreen" v-show="!isFullScreen">
-      <img src="../../src/assets/default/exitFullScreen.png" alt="" class="ctrScreen" @click="exitFullScreen" v-show="isFullScreen">
+      <svg @click="popUpsKey.login=true">
+        <use xlink:href="#login"></use>
+      </svg>
+      <svg @click="exitFullScreen" v-show="isFullScreen">
+        <use xlink:href="#fill"></use>
+      </svg>
+      <svg @click="fullScreen" v-show="!isFullScreen">
+        <use xlink:href="#full"></use>
+      </svg>
+      <svg @click="closeScreen">
+        <use xlink:href="#close"></use>
+      </svg>
     </div>
   </div>
 </template>
@@ -645,22 +654,12 @@ export default {
     .navControl {
       flex: 1;
       text-align: right;
-      img {
-        float: right;
+      svg {
+        position: relative;
         width: 12px;
         height: 12px;
-        padding: 7.5px 18px;
+        padding: 7.5px 16px;
         cursor: pointer;
-      }
-      .ctrScreen {
-        &:hover {
-          background-color: #e5e5e5;
-        }
-      }
-      .ctrClose {
-        &:hover {
-          background-color: #ff0000;
-        }
       }
     }
   }

@@ -40,7 +40,7 @@ export default {
   mounted () {
     var a = this
     window.onresize = function () {
-      a.init()
+      if (this.ruler.ruler) a.init()
     }
     this.init()
   },

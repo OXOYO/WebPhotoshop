@@ -91,6 +91,7 @@
     <colorCurve></colorCurve>
     <!-- 色阶 -->
     <colorLevel></colorLevel>
+    <login></login>
   </div>
 </template>
 
@@ -101,6 +102,7 @@ import fieldSet from './selectmodules/fieldSet.vue'
 import popSlot from './popSlot.vue'
 import colorCurve from './colorCurve.vue'
 import colorLevel from './colorLevel.vue'
+import login from './login.vue'
 export default {
   name: 'pop-ups',
   components: {
@@ -108,7 +110,8 @@ export default {
     fieldSet,
     popSlot,
     colorCurve,
-    colorLevel
+    colorLevel,
+    login
   },
   data () {
     return {
