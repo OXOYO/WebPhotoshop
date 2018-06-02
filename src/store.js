@@ -103,7 +103,7 @@ export default new Vuex.Store({
     selectGrayscale: '',
     // 窗口
     showPops: {
-      showRecord: true,
+      showRecord: false,
       showTools: true
     },
     // 标尺，网格

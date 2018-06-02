@@ -10,13 +10,18 @@
 			<div class="main">
         <wptabs></wptabs>
         <div class="mainCenter">
+          <!-- 标尺 -->
           <ruler class="main-ruler"></ruler>
+          <!-- 画布 -->
           <div class="main-box">
             <sketchpad></sketchpad>
           </div>
+          <!-- 颜色选择器 -->
           <div class="main-pop" v-show="isShowPop">
             <colorPicker></colorPicker>
           </div>
+          <!-- 初始化页面 -->
+          <imgstr></imgstr>
         </div>
         <div class="mainRight">
           <div class="layers-bar">
@@ -47,6 +52,7 @@ import record from './record.vue'
 import colorPicker from './colorPicker.vue'
 import popUps from './popUps.vue'
 import ruler from './ruler.vue'
+import imgstr from './imgstr.vue'
 import { mapState } from 'vuex'
 export default {
   name: 'wrapper',
@@ -62,7 +68,8 @@ export default {
     record,
     colorPicker,
     popUps,
-    ruler
+    ruler,
+    imgstr
   },
   methods: {},
   computed: {

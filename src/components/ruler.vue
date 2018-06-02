@@ -37,13 +37,6 @@ export default {
       'ruler'
     ])
   },
-  mounted () {
-    var a = this
-    window.onresize = function () {
-      if (this.ruler.ruler) a.init()
-    }
-    this.init()
-  },
   methods: {
     init () {
       this.w = document.getElementsByClassName('main-box')[0].offsetWidth
@@ -130,6 +123,18 @@ export default {
     showPops: {
       handler () {
         this.init()
+      },
+      deep: true
+    },
+    ruler: {
+      handler (val) {
+        var a = this
+        if (val.ruler) {
+          this.init()
+          window.addEventListener('resize', () => a.init())
+        } else {
+          window.removeEventListener('resize', () => a.init())
+        }
       },
       deep: true
     }

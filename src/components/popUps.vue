@@ -91,6 +91,7 @@
     <colorCurve></colorCurve>
     <!-- 色阶 -->
     <colorLevel></colorLevel>
+    <!-- 登录 -->
     <login></login>
   </div>
 </template>
