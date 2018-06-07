@@ -4,8 +4,18 @@ import tools from './state/tools'
 Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
+    // 用户信息
+    accountObj: {
+      id: '',
+      name: '',
+      password: '',
+      imgUrl: ''
+    },
+    // 鼠标在画布上坐标
     offset: [20, 40],
+    // 绘图工具信息
     tools: tools,
+    // 特殊效果信息
     effectArr: [
       {
         name: 'blackwhite',
@@ -54,66 +64,53 @@ export default new Vuex.Store({
         title: '曲线'
       }
     ],
+    // 当前使用的是哪个工具
     toolId: 5,
+    // 全局绘图颜色
     globalColor: [0, 0, 0],
-    canvasArr: [{
-      name: '新建画布1.png',
-      width: 820,
-      height: 520,
-      context: '',
-      canvas: '',
-      imgData: '',
-      // 缩放比例
-      scaleProportion: 1,
-      dataArr: [{
-        id: 24,
-        imgData: ''
-      }],
-      index: 0,
-      // 亮度/对比度
-      light: {
-        name: 'light',
-        title: '亮度/对比度',
-        data: [{
-          title: '亮度',
-          num: 0,
-          len: [-150, 150]
-        }, {
-          title: '对比度',
-          num: 0,
-          len: [-100, 100]
-        }]
-      },
-      // 色相/饱和度
-      colorpalettes: {
-        name: 'colorpalettes',
-        title: '色相/饱和度',
-        data: [{
-          title: '色相',
-          num: 0,
-          len: [-180, 180]
-        }, {
-          title: '饱和度',
-          num: 0,
-          len: [-100, 100]
-        }]
-      }
-    }],
+    // 所有的画布信息
+    canvasArr: [
+      // {
+      //   name: '新建画布1.png',
+      //   width: 820,
+      //   height: 520,
+      //   context: '',
+      //   canvas: '',
+      //   imgData: '',
+      //   // 缩放比例
+      //   scaleProportion: 1,
+      //   // 操作历史记录
+      //   dataArr: [{
+      //     id: 24,
+      //     imgData: ''
+      //   }],
+      //   index: 0
+      // }
+    ],
+    // 当前使用的是第几个画布
     nowCanvas: 0,
-    selectGrayscale: '',
     // 窗口
     showPops: {
+      // 历史记录
       showRecord: false,
+      // 工具
       showTools: true
     },
     // 标尺，网格
     ruler: {
       ruler: false
     },
+    // 最近使用项
+    recent: {
+      item: true
+    },
     // 各种弹窗开启
     popUpsKey: {
+      // 新建
       newCanvas: false,
+      // 关闭
       closeCanvas: false,
+      // 清除
       clearCanvas: false,
       // 关于
       aboutWebPhotoshop: false,
@@ -165,19 +162,17 @@ export default new Vuex.Store({
     },
     changeNowCanvas (state, nowCanvas) {
       state.nowCanvas = nowCanvas
-      state.selectGrayscale = ''
-    },
-    changeSelectGrayscale (state, string) {
-      state.selectGrayscale = string
-      if (string === '亮度/对比度') {
-        state.popUpsKey.light = true
-      }
     },
     changeglobalColor (state, arr) {
       state.globalColor = [].concat(arr)
     },
     changePopUpsKey (state, arr) {
       state.popUpsKey[arr[0]] = arr[1]
+    }
+  },
+  getters: {
+    nowCanvasArr: state => {
+      return state.canvasArr[state.nowCanvas]
     }
   }
 })

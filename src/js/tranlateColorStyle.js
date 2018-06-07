@@ -1,3 +1,4 @@
+// 颜色空间转换
 var TranslateColorStyle = {
   // hsv转RGB
   hsvToRgb: function (obj) {

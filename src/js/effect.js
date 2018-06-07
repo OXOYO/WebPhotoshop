@@ -1,9 +1,8 @@
+// import store from '../store'
 class Tools {
-  constructor (a) {
-    for (const prop in a) {
-      this[prop] = a[prop]
-    }
-  }
+  // constructor () {
+  //   this.imgData = store.getters.nowCanvasArr.imgData
+  // }
   // 灰度化
   setGrayscale (imgData) {
     var rgb
@@ -261,4 +260,4 @@ class Tools {
     return output
   }
 }
-export default Tools
+export default new Tools()

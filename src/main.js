@@ -11,6 +11,11 @@ Vue.config.productionTip = false
 Vue.use(VueResource)
 /* eslint-disable no-new */
 
+// 定义全局过滤器
+// number过滤非数字输入
+Vue.filter('number', function (value) {
+  return value.replace(/\D/g, '')
+})
 new Vue({
   el: '#app',
   router,

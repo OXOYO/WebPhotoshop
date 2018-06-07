@@ -1,8 +1,8 @@
 <template>
-  <popSlot :name="name" :title="dataObj.title" :prop="name">
+  <popSlot :name="name" :title="lightArr.title" :prop="name">
     <div class="recordWrapper fieldset">
       <div class="fieldsetTop">
-        <fieldset class="fieldsetBox" v-for="(item, index) in dataObj.data" :key="item.id">
+        <fieldset class="fieldsetBox" v-for="(item, index) in lightArr.data" :key="item.id">
           <legend>{{item.title}}</legend>
           <div class="controlBox">
             <div class="slider" :class="name+'slider'" @mousedown="moveRound($event, index)">
@@ -38,16 +38,49 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import buttonIcon from './buttonIcon.vue'
 import popSlot from '../../components/popSlot.vue'
+import effect from '../../js/effect.js'
+import translateColorStyle from '../../js/tranlateColorStyle.js'
 export default {
   name: 'field-set',
   data () {
     return {
       index: '',
+      imgData: '',
       left: [130, 130],
-      num: [0, 0]
+      num: [0, 0],
+      // HSV
+      hsvArr: [],
+      // 亮度/对比度
+      light: {
+        name: 'light',
+        title: '亮度/对比度',
+        data: [{
+          title: '亮度',
+          num: 0,
+          len: [-150, 150]
+        }, {
+          title: '对比度',
+          num: 0,
+          len: [-100, 100]
+        }]
+      },
+      // 色相/饱和度
+      colorpalettes: {
+        name: 'colorpalettes',
+        title: '色相/饱和度',
+        data: [{
+          title: '色相',
+          num: 0,
+          len: [-180, 180]
+        }, {
+          title: '饱和度',
+          num: 0,
+          len: [-100, 100]
+        }]
+      }
     }
   },
   props: ['name'],
@@ -56,27 +89,33 @@ export default {
     popSlot
   },
   computed: {
-    dataObj () {
-      return this.canvasArr[this.nowCanvas][this.name]
-    },
     ...mapState([
       'popUpsKey',
       'canvasArr',
       'nowCanvas'
-    ])
+    ]),
+    ...mapGetters([
+      'nowCanvasArr'
+    ]),
+    isShow () {
+      return [this.popUpsKey.light, this.popUpsKey.colorpalettes]
+    },
+    lightArr () {
+      return this.name === 'light' ? this.light : this.colorpalettes
+    }
   },
   methods: {
     close (prop) {
       if (prop === this.name) {
         // 取消
-        this.dataObj.data[0].num = this.num[0]
-        this.dataObj.data[1].num = this.num[1]
+        this.lightArr.data[0].num = this.num[0]
+        this.lightArr.data[1].num = this.num[1]
         this.left[0] = (this.num[0] + 50) / 100 * 260
         this.left[1] = (this.num[1] + 50) / 100 * 260
       } else {
         // 确定
-        this.num[0] = this.dataObj.data[0].num
-        this.num[1] = this.dataObj.data[1].num
+        this.num[0] = this.lightArr.data[0].num
+        this.num[1] = this.lightArr.data[1].num
         var obj = {
           id: this.name === 'light' ? 35 : 34,
           imgData: this.canvasArr[this.nowCanvas].imgData
@@ -110,8 +149,69 @@ export default {
       return [['0%', s], ['25%', 0.25 * len + s], ['50%', 0.5 * len + s], ['75%', 0.75 * len + s], ['100%', arr[1]]]
     },
     leftToTip (x) {
-      var arr = this.dataObj.data[this.index].len
-      this.dataObj.data[this.index].num = Math.round(x / 260 * (arr[1] - arr[0]) + arr[0])
+      var arr = this.lightArr.data[this.index].len
+      this.lightArr.data[this.index].num = Math.round(x / 260 * (arr[1] - arr[0]) + arr[0])
+      if (this.name === 'light') {
+        this.light_canvas()
+      } else {
+        this.colorpalettes_canvas()
+      }
+    },
+    // 将实时的亮度对比度反馈到画布上
+    light_canvas () {
+      const Brightness = this.lightArr.data[0].num
+      const Contrast = this.lightArr.data[1].num
+      // 处理后的像素信息
+      const imgData = effect.setLight(this.imgData, Brightness, Contrast)
+      // 更新像素信息数组和画布
+      this.nowCanvasArr.imgData = imgData
+      this.nowCanvasArr.context.putImageData(imgData, 0, 0)
+    },
+    // 将实时的色相饱和度反馈到画布上
+    colorpalettes_canvas () {
+      const val = [this.lightArr.data[0].num, this.lightArr.data[1].num]
+      var outImgdata = this.nowCanvasArr.context.createImageData(this.imgData)
+      var data = outImgdata.data
+      for (let i = 0, n = data.length; i < n; i += 4) {
+        var j = i / 4 * 3
+        var H = (this.hsvArr[j] + val[0]) > 360 ? 360 : ((this.hsvArr[j] + val[0]) < 0 ? 0 : this.hsvArr[j] + val[0])
+        var S = (this.hsvArr[j + 1] + val[1] / 200) > 1 ? 1 : ((this.hsvArr[j + 1] + val[1] / 200) < 0 ? 0 : (this.hsvArr[j + 1] + val[1] / 200))
+        var rgb = translateColorStyle.hsvToRgb({
+          H: H,
+          S: S,
+          V: this.hsvArr[j + 2]
+        })
+        data[i] = rgb.R
+        data[i + 1] = rgb.G
+        data[i + 2] = rgb.B
+        data[i + 3] = 255
+      }
+      // 更新像素信息数组和画布
+      this.nowCanvasArr.imgData = outImgdata
+      this.nowCanvasArr.context.putImageData(outImgdata, 0, 0)
+    },
+    // 将RGB转为HSV
+    toHsv () {
+      var data = this.imgData.data
+      for (let i = 0, n = data.length; i < n; i += 4) {
+        var rgb = translateColorStyle.rgbTohsv({
+          R: data[i],
+          G: data[i + 1],
+          B: data[i + 2]
+        })
+        this.hsvArr.push(rgb.H, rgb.S, rgb.V)
+      }
+    }
+  },
+  watch: {
+    isShow: {
+      handler (val) {
+        this.imgData = this.nowCanvasArr.imgData
+        if (val[1]) {
+          this.toHsv()
+        }
+      },
+      deep: true
     }
   }
 }

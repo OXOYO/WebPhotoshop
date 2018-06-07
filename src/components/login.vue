@@ -40,7 +40,8 @@ export default {
   },
   computed: {
     ...mapState([
-      'popUpsKey'
+      'popUpsKey',
+      'accountObj'
     ])
   },
   mounted () {
@@ -52,6 +53,7 @@ export default {
       let account = this.getStorage()
       if (account) {
         this.account = account
+        this.login()
       }
     },
     login () {
@@ -89,6 +91,11 @@ export default {
           if (response.body.length > 0) {
             // 有账号
             this.setStorage()
+            this.accountObj.id = response.body[0]._id
+            this.accountObj.name = response.body[0].name
+            this.accountObj.password = response.body[0].password
+            this.accountObj.imgUrl = response.body[0].imgUrl
+            this.popUpsKey.login = false
           } else {
             // 无账号
             this.showError = true

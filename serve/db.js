@@ -11,7 +11,8 @@ db.once('open',() => console.log('Mongo connection successed'))
 /************** 定义模式loginSchema **************/
 const loginSchema = new mongoose.Schema({
     name : String,
-    password : String
+    password : String,
+    imgUrl: []
 }, {collection: 'account'})
 
 /************** 定义模型Model **************/

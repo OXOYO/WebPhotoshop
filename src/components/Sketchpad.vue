@@ -27,10 +27,8 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import Effect from '../js/effect.js'
+import { mapState, mapGetters } from 'vuex'
 import stroke from '../js/stroke.js'
-import translateColorStyle from '../js/tranlateColorStyle'
 export default {
   name: 'sketchpad',
   data () {
@@ -41,7 +39,6 @@ export default {
       prtPoint: [100, 100],
       beginPoint: [0, 0],
       prvOffset: [0, 0],
-      effect: '',
       strokeFunction: '',
       prvImagaData: {},
       selectToolObj: {
@@ -57,6 +54,7 @@ export default {
         isShow: false,
         oldId: ''
       },
+      length: 0,
       // HSV
       hsvArr: []
     }
@@ -64,66 +62,42 @@ export default {
   computed: {
     imgData: {
       get () {
-        return this.canvasArr[this.nowCanvas].imgData
+        return this.nowCanvasArr.imgData
       },
       set (val) {
-        this.canvasArr[this.nowCanvas].imgData = val
+        this.nowCanvasArr.imgData = val
       }
     },
     canvas: {
       get () {
-        return this.canvasArr[this.nowCanvas].canvas
+        return this.nowCanvasArr.canvas
       },
       set (val) {
-        this.canvasArr[this.nowCanvas].canvas = val
+        this.nowCanvasArr.canvas = val
       }
     },
     context: {
       get () {
-        return this.canvasArr[this.nowCanvas].context
+        return this.nowCanvasArr.context
       },
       set (val) {
-        this.canvasArr[this.nowCanvas].context = val
-      }
-    },
-    newIndex () {
-      return this.canvasArr[this.nowCanvas].index
-    },
-    // 当前画布imgData
-    canvasImageData: {
-      get () {
-        return this.canvasArr[this.nowCanvas].dataArr[this.newIndex].imgData
-      },
-      set (val) {
-        this.canvasArr[this.nowCanvas].dataArr[this.newIndex].imgData = val
+        this.nowCanvasArr.context = val
       }
     },
     // 当前画布的宽高
     canvasLen () {
       return [
-        this.canvasArr[this.nowCanvas].width,
-        this.canvasArr[this.nowCanvas].height
+        this.nowCanvasArr.width,
+        this.nowCanvasArr.height
       ]
     },
     // 当前画布缩放比例
     scaleProportion () {
-      return this.canvasArr[this.nowCanvas].scaleProportion
+      return this.nowCanvasArr.scaleProportion
     },
     // 缩放画布
     scaleCanvas () {
-      return {width: this.canvasArr[this.nowCanvas].width * this.scaleProportion + 'px'}
-    },
-    // 监听亮度/对比度变化
-    newLight () {
-      return [this.canvasArr[this.nowCanvas].light.data[0].num, this.canvasArr[this.nowCanvas].light.data[1].num]
-    },
-    // 监听色相/饱和度变化
-    newColorpalettes () {
-      return [this.canvasArr[this.nowCanvas].colorpalettes.data[0].num, this.canvasArr[this.nowCanvas].colorpalettes.data[1].num]
-    },
-    // 监听是否开始调整功能
-    openChange () {
-      return [this.popUpsKey.light, this.popUpsKey.colorpalettes]
+      return {width: this.nowCanvasArr.width * this.scaleProportion + 'px'}
     },
     // 当前工具具体参数
     toolsArray () {
@@ -136,38 +110,26 @@ export default {
       'globalColor',
       'canvasArr',
       'nowCanvas',
-      'selectGrayscale',
       'popUpsKey',
-      'tools'
+      'tools',
+      'recent'
+    ]),
+    ...mapGetters([
+      'nowCanvasArr'
     ])
   },
   mounted () {
-    this.init(0)
-    this.effect = new Effect(this)
     this.wrapper = document.getElementsByClassName('sketchpad')[0]
     for (var prop in stroke) {
       this[prop] = stroke[prop]
     }
-    for (let prop in translateColorStyle) {
-      this[prop] = translateColorStyle[prop]
-    }
     this.strokeEvent = this.pen
   },
   methods: {
-    init: function (id) {
-      if (!this.canvas) {
-        this.canvas = document.getElementById(id)
-      }
-      if (!this.context) {
-        this.context = this.canvas.getContext('2d')
-      }
-      if (!this.canvasImageData) {
-        this.getImageData()
-        this.canvasImageData = this.imgData
-      } else {
-        this.imgData = this.canvasImageData
-        this.putImageData()
-      }
+    init: function () {
+      this.canvas = document.getElementById(0)
+      this.context = this.canvas.getContext('2d')
+      this.getImageData()
     },
     move: function (event) {
       this.prvOffset = this.offset
@@ -239,130 +201,28 @@ export default {
     drawImage: function (img) {
       this.context.drawImage(img, 0, 0)
       this.getImageData()
-    },
-    // 效果
-    drawImg: function (string, index) {
-      this.imgData = this.effect[string](this.imgData)
-      this.putImageData()
-      var obj = {
-        id: index,
-        imgData: this.imgData
-      }
-      this.$store.commit('changeDataArr', obj)
-    },
-    // 将RGB转为HSV
-    toHsv () {
-      var data = this.imgData.data
-      for (let i = 0, n = data.length; i < n; i += 4) {
-        var rgb = this.rgbTohsv({
-          R: data[i],
-          G: data[i + 1],
-          B: data[i + 2]
-        })
-        this.hsvArr.push(rgb.H, rgb.S, rgb.V)
-      }
     }
   },
   watch: {
-    openChange: {
-      handler (val) {
-        if (val[0] || val[1]) {
-          this.prvImagaData = this.imgData
-          if (val[1]) this.toHsv()
-        }
-      },
-      deep: true
-    },
-    // 改变亮度/对比度
-    newLight: {
-      handler (val) {
-        if (this.openChange[0]) {
-          const Brightness = val[0]
-          const Contrast = val[1]
-          const data = this.prvImagaData
-          this.imgData = this.effect.setLight(data, Brightness, Contrast)
-          this.putImageData()
-        }
-      },
-      deep: true
-    },
-    // 改变色相/饱和度
-    newColorpalettes: {
-      handler (val) {
-        if (this.openChange[1]) {
-          var outImgdata = this.context.createImageData(this.prvImagaData)
-          var data = outImgdata.data
-          for (let i = 0, n = data.length; i < n; i += 4) {
-            var j = i / 4 * 3
-            var H = (this.hsvArr[j] + val[0]) > 360 ? 360 : ((this.hsvArr[j] + val[0]) < 0 ? 0 : this.hsvArr[j] + val[0])
-            var S = (this.hsvArr[j + 1] + val[1] / 200) > 1 ? 1 : ((this.hsvArr[j + 1] + val[1] / 200) < 0 ? 0 : (this.hsvArr[j + 1] + val[1] / 200))
-            var rgb = this.hsvToRgb({
-              H: H,
-              S: S,
-              V: this.hsvArr[j + 2]
-            })
-            data[i] = rgb.R
-            data[i + 1] = rgb.G
-            data[i + 2] = rgb.B
-            data[i + 3] = 255
-          }
-          this.imgData = outImgdata
-          this.putImageData()
-        }
-      },
-      deep: true
-    },
     // 监听添加canvasArr元素
-    canvasArr: function () {
-      this.$nextTick(function () {
-        // DOM 更新了
+    canvasArr: function (val) {
+      if (this.canvasArr.length > 0) {
+        this.recent.item = false
+      } else {
+        this.recent.item = true
+      }
+      if (val.length > this.length) {
         this.$store.commit('changeNowCanvas', this.canvasArr.length - 1)
-      })
-    },
-    nowCanvas: function (val) {
-      this.init(val)
-    },
-    selectGrayscale: function (val) {
-      if (val) {
-        switch (val) {
-          case '黑白':
-            this.drawImg('setBlack', 22)
-            break
-          case '反色':
-            this.drawImg('setInverted', 23)
-            break
-          case '模糊':
-            this.drawImg('gaussBlur', 25)
-            break
-          case '锐化':
-            this.drawImg('setSharpen', 27)
-            break
-          case '浮雕':
-            this.drawImg('setRelief', 28)
-            break
-          case '柔化':
-            this.drawImg('setSoften', 29)
-            break
-          case '雕刻':
-            this.drawImg('setSculpture', 32)
-            break
-          case '怀旧':
-            this.drawImg('setNostalgia', 33)
-            break
-        }
+        this.$nextTick(function () {
+          // DOM 更新了
+          if (!this.canvas) {
+            this.canvas = document.getElementById(this.nowCanvas)
+            this.context = this.canvas.getContext('2d')
+            this.putImageData()
+          }
+        })
       }
-    },
-    newIndex (val) {
-      if (this.canvasArr[this.nowCanvas].dataArr[val].imgData) {
-        this.imgData = this.canvasArr[this.nowCanvas].dataArr[val].imgData
-        this.putImageData()
-        if (this.selectGrayscale === '亮度/对比度') {
-          this.prvImagaData = this.canvasArr[this.nowCanvas].dataArr[val].imgData
-        }
-      }
-    },
-    imgData (val) {
-      this.canvasArr[this.nowCanvas].imgData = this.imgData
+      this.length = val.length
     },
     toolId (val, oldVal) {
       this.selectToolObj.oldId = oldVal

@@ -6,15 +6,15 @@
         <div class="newCanvasInput">
           <div class="inputOne">
             <span>名称：</span>
-            <input type="text" v-model="canvasObj.name">
+            <input type="text" v-model="name">
           </div>
           <div>
             <span>高度：</span>
             <div class="spinner">
-              <input class="spinnerInput" v-model="canvasObj.height">
+              <input class="spinnerInput" v-model="height" @input="height=$event.target.value.replace(/\D/g, '')">
               <div class="spinnerArrow">
-                <div class="spinnerArrowUp" @click="changeInput('height', 'add')"></div>
-                <div class="spinnerArrowDown" @click="changeInput('height', 'down')"></div>
+                <div class="spinnerArrowUp" @click="height+=1"></div>
+                <div class="spinnerArrowDown" @click="height=height?height-1:height"></div>
               </div>
             </div>
             <span>像素</span>
@@ -22,10 +22,10 @@
           <div>
             <span>宽度：</span>
             <div class="spinner">
-              <input class="spinnerInput" v-model="canvasObj.width">
+              <input class="spinnerInput" v-model="width" @input="width=$event.target.value.replace(/\D/g, '')">
               <div class="spinnerArrow">
-                <div class="spinnerArrowUp" @click="changeInput('width', 'add')"></div>
-                <div class="spinnerArrowDown" @click="changeInput('width', 'down')"></div>
+                <div class="spinnerArrowUp" @click="width+=1"></div>
+                <div class="spinnerArrowDown" @click="width=width?width-1:width"></div>
               </div>
             </div>
             <span>像素</span>
@@ -38,7 +38,7 @@
       </div>
     </popSlot>
     <!-- 关闭 -->
-    <popSlot :title="'确定'" :prop="'closeCanvas'">
+    <popSlot :title="'确定'" :prop="'closeCanvas'" v-if="canvasArr.length>0">
       <div class="recordWrapper closeCanvas">
         <div class="closeCanvasTle">
           <span class="closeCanvasIcon"></span>
@@ -88,9 +88,9 @@
       </div>
     </popSlot>
     <!-- 色彩曲线调整工具 -->
-    <colorCurve></colorCurve>
+    <colorCurve v-if="canvasArr.length>0"></colorCurve>
     <!-- 色阶 -->
-    <colorLevel></colorLevel>
+    <colorLevel v-if="canvasArr.length>0"></colorLevel>
     <!-- 登录 -->
     <login></login>
   </div>
@@ -104,6 +104,8 @@ import popSlot from './popSlot.vue'
 import colorCurve from './colorCurve.vue'
 import colorLevel from './colorLevel.vue'
 import login from './login.vue'
+import openImg from '../js/openImg'
+import upload from '../js/upload'
 export default {
   name: 'pop-ups',
   components: {
@@ -116,33 +118,9 @@ export default {
   },
   data () {
     return {
-      canvasObj: {
-        name: '新建画布',
-        width: 820,
-        height: 520,
-        context: '',
-        canvas: '',
-        imgData: '',
-        scaleProportion: 1,
-        dataArr: [{
-          id: 24,
-          imgData: ''
-        }],
-        index: 0,
-        lightObj: {
-          name: 'light',
-          title: '亮度/对比度',
-          data: [{
-            title: '亮度',
-            num: 0,
-            len: [-50, 50]
-          }, {
-            title: '对比度',
-            num: 0,
-            len: [-50, 50]
-          }]
-        }
-      }
+      name: '新建画布',
+      width: 820,
+      height: 520
     }
   },
   computed: {
@@ -175,17 +153,12 @@ export default {
       this.popUpsKey[prop] = false
     },
     add () {
-      this.$store.commit('addCanvasArr', JSON.parse(JSON.stringify(this.canvasObj)))
+      openImg.createImg(this.name, this.width, this.height)
       this.close('newCanvas')
     },
-    changeInput (prop, key) {
-      if (key === 'add') {
-        this.canvasObj[prop]++
-      } else {
-        this.canvasObj[prop]--
-      }
-    },
     popCanvas () {
+      // 将当前关闭的图片保存到服务器中
+      upload(this, this.nowCanvas)
       this.$store.commit('popCanvasArr', this.nowCanvas)
       this.close('closeCanvas')
     },

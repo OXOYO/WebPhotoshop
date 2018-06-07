@@ -1,18 +1,18 @@
 <template>
-  <div class="img-storage">
+  <div class="img-storage" v-show="recent.item">
     <div class="img-wrapper">
       <div class="img-left">
         <div>最近使用项</div>
-        <button>新建</button>
-        <button>打开</button>
+        <button @click="popUpsKey.newCanvas=true">新建</button>
+        <button @click="open">打开</button>
       </div>
       <div class="img-right">
         <div class="img-box">
-          <div class="img-border" v-for="(item, index) in imgArr" :key="index">
+          <div class="img-border" v-for="(item, index) in accountObj.imgUrl" :key="index" @click="openOlineImg(item)">
             <div class="img-content">
-              <img :src="item.url" alt="" srcset="">
+              <img :src="item" alt="" srcset="">
             </div>
-            <div class="img-title">{{item.title}}</div>
+            <div class="img-title">{{/[^/+]+\.\w+/.exec(item)[0]}}</div>
           </div>
         </div>
       </div>
@@ -21,35 +21,26 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+import openImg from '../js/openImg'
 export default {
   name: 'imgstr',
   data () {
-    return {
-      imgArr: [{
-        title: '新建画布1.png',
-        url: require('../../src/assets/files/a.jpg')
-      }, {
-        title: '新建画布1.png',
-        url: require('../../src/assets/files/b.jpg')
-      }, {
-        title: '新建画布1.png',
-        url: require('../../src/assets/files/c.jpg')
-      }, {
-        title: '新建画布1.png',
-        url: require('../../src/assets/files/a.jpg')
-      }, {
-        title: '新建画布1.png',
-        url: require('../../src/assets/files/a.jpg')
-      }, {
-        title: '新建画布1.png',
-        url: require('../../src/assets/files/a.jpg')
-      }, {
-        title: '新建画布1.png',
-        url: require('../../src/assets/files/a.jpg')
-      }, {
-        title: '新建画布1.png',
-        url: require('../../src/assets/files/a.jpg')
-      }]
+    return {}
+  },
+  computed: {
+    ...mapState([
+      'recent',
+      'accountObj',
+      'popUpsKey'
+    ])
+  },
+  methods: {
+    open () {
+      openImg.openLocalImg()
+    },
+    openOlineImg (src) {
+      openImg.openOnlineImg(src)
     }
   }
 }
@@ -113,12 +104,19 @@ export default {
           .img-content {
             height: 140px;
             img {
+              margin-left: 50%;
+              transform: translateX(-50%);
               max-width: 100%;
+              max-height: 100%;
             }
           }
           .img-title {
             text-align: center;
             color: #95B8E7;
+            // 单行文字溢出打点
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
           }
         }
       }

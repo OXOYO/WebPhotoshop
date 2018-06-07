@@ -29,7 +29,7 @@ import checkmodule from '../components/selectmodules/checkmodule.vue'
 import dropmodule from '../components/selectmodules/dropmodule.vue'
 import imgmodule from '../components/selectmodules/imgmodule.vue'
 import selectmodule from '../components/selectmodules/selectmodule.vue'
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 export default {
   name: 'alloption',
   data () {
@@ -40,7 +40,11 @@ export default {
       'tools',
       'toolId',
       'canvasArr',
-      'nowCanvas'
+      'nowCanvas',
+      'popUpsKey'
+    ]),
+    ...mapGetters([
+      'nowCanvasArr'
     ])
   },
   components: {
@@ -54,7 +58,12 @@ export default {
       this.$store.commit('changeNowCanvas', index)
     },
     popCanvas: function (index) {
-      this.$store.commit('popCanvasArr', index)
+      // 如果图片未做改变，直接关闭，如果有更改，打开关闭确认框
+      if (this.nowCanvasArr.dataArr.length === 1) {
+        this.$store.commit('popCanvasArr', index)
+      } else {
+        this.popUpsKey.closeCanvas = true
+      }
     }
   }
 }

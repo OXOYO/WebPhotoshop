@@ -2,7 +2,7 @@
   <div>
     <span>&nbsp;&nbsp;|&nbsp;&nbsp;{{optionalObj.title}}：</span>
     <div class="spinner">
-      <input class="spinnerInput spinnerInputMax" v-model="optionalObj.choose">
+      <input class="spinnerInput spinnerInputMax" v-model="optionalObj.choose" @input="valInput">
       <div class="spinnerArrow">
         <div class="spinnerArrowUp" @click="numberUp"></div>
         <div class="spinnerArrowDown" @click="numberDown"></div>
@@ -15,7 +15,19 @@
 export default {
   name: 'selectmodule',
   props: ['optionalObj'],
+  data () {
+    return {
+      type: ''
+    }
+  },
+  mounted () {
+    this.type = typeof this.optionalObj.choose === 'number' ? 'number' : 'string'
+  },
   methods: {
+    valInput (event) {
+      let val = event.target.value
+      this.optionalObj.choose = this.type === 'number' ? val.replace(/\D/g, '') : val.replace(/\D/g, '') + '%'
+    },
     numberUp: function () {
       if (typeof this.optionalObj.choose === 'number') {
         if (this.optionalObj.choose !== 100) {

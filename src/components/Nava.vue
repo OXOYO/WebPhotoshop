@@ -373,7 +373,7 @@
           <span>网站</span>
         </div>
         <div class="navSep"></div>
-        <div class="navBox">
+        <div class="navBox" @click="uploadImg">
           <img src="../../src/assets/icons/send.png" height="16" width="16">
           <span>反馈或报告</span>
         </div>
@@ -402,10 +402,12 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import loadImg from '../js/loadImg'
+import { mapState, mapGetters } from 'vuex'
 import rotate from '../js/rotate'
 import flip from '../js/flip'
+import upload from '../js/upload'
+import openImg from '../js/openImg'
+import drawImg from '../js/drawImg'
 export default {
   name: 'nava',
   data () {
@@ -421,27 +423,22 @@ export default {
       'nowCanvas',
       'popUpsKey',
       'showPops',
-      'ruler'
+      'ruler',
+      'accountObj',
+      'tools'
+    ]),
+    ...mapGetters([
+      'nowCanvasArr'
     ])
   },
   mounted () {
-    var a = this
     // 拖拽上传
     document.addEventListener('dragenter', function (e) {
       e.preventDefault()// 禁止浏览器默认行为
     }, false)
     document.addEventListener('drop', function (e) {
       e.preventDefault()// 禁止浏览器默认行为
-      var file = e.dataTransfer.files[0]
-      var reader = new FileReader()
-      reader.readAsDataURL(file)// 转化成base64数据类型
-      reader.onload = function (e) {
-        var img = new Image()
-        img.src = this.result
-        img.onload = function () {
-          a.$store.commit('addCanvasArr', loadImg(file, img))
-        }
-      }
+      openImg.dropImg(e)
     }, false)
     document.addEventListener('dragleave', function (e) {
       e.preventDefault()// 禁止浏览器默认行为
@@ -453,38 +450,26 @@ export default {
   methods: {
     // 旋转画布
     rotateCanvas (angle) {
-      rotate(angle)
+      rotate(this, angle)
     },
     // 翻转画布
     flipCanvas (num) {
       flip(num)
     },
+    // 上传
+    uploadImg () {
+      upload(this, 0)
+    },
     // 打开
     openImg: function () {
-      var inputObj = document.createElement('input')
-      inputObj.addEventListener('change', readFile, false)
-      inputObj.type = 'file'
-      inputObj.accept = 'image/*'
-      inputObj.click()
-      var a = this
-      function readFile () {
-        var file = this.files[0]// 获取input输入的图片
-        var reader = new FileReader()
-        reader.readAsDataURL(file)// 转化成base64数据类型
-        reader.onload = function (e) {
-          var img = new Image()
-          img.onload = function () {
-            a.$store.commit('addCanvasArr', loadImg(file, img))
-          }
-          img.src = this.result
-        }
-      }
+      openImg.openLocalImg()
     },
     changeImgShow: function (string) {
       this.popUpsKey[string] = true
     },
     selectGrayscale: function (string) {
-      this.$store.commit('changeSelectGrayscale', string)
+      drawImg.change(string, this)
+      // this.$store.commit('changeSelectGrayscale', string)
     },
     showTools: function () {
       this.showPops.showTools = true

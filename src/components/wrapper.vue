@@ -82,7 +82,8 @@ export default {
     },
     ...mapState([
       'popUpsKey',
-      'showPops'
+      'showPops',
+      'canvasArr'
     ])
   }
 }

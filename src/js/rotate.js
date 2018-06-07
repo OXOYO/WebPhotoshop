@@ -1,7 +1,8 @@
-import store from '../store'
-function rotate (angle) {
-  var index = store.state.nowCanvas
-  var canvasArr = store.state.canvasArr[index]
+// 旋转图片
+function rotate (vue, angle) {
+  console.log(vue)
+  var index = vue.nowCanvas
+  var canvasArr = vue.canvasArr[index]
   var width = canvasArr.width
   var height = canvasArr.height
   var context = canvasArr.context

@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import popSlot from './popSlot.vue'
 export default {
   name: 'record',
@@ -68,8 +68,7 @@ export default {
   },
   computed: {
     repeatArr () {
-      if (!this.tollsArr) return []
-      var arr = this.canvasArr[this.nowCanvas].dataArr
+      var arr = this.nowCanvasArr ? this.nowCanvasArr.dataArr : []
       var repArr = []
       arr.forEach(ele => {
         repArr.push(this.tollsArr[ele.id])
@@ -78,17 +77,19 @@ export default {
     },
     ...mapState([
       'canvasArr',
-      'nowCanvas',
       'tools',
       'effectArr',
       'showPops'
     ]),
+    ...mapGetters([
+      'nowCanvasArr'
+    ]),
     getArrIndex: {
       get () {
-        return this.canvasArr[this.nowCanvas].index
+        return this.nowCanvasArr.index
       },
       set (val) {
-        this.canvasArr[this.nowCanvas].index = val
+        this.nowCanvasArr.index = val
       }
     },
     classObjectOne: function () {
@@ -109,21 +110,27 @@ export default {
       this.showPops.showRecord = false
     },
     changeIndex (str) {
-      var length = this.canvasArr[this.nowCanvas].dataArr.length - 1
-      var index = this.canvasArr[this.nowCanvas].index
+      var length = this.nowCanvasArr.dataArr.length - 1
+      var index = this.getArrIndex
       if (str === 'undo') {
+        // 撤销
         if (index) {
-          this.canvasArr[this.nowCanvas].index = index - 1
+          this.getArrIndex = index - 1
         }
       } else if (str === 'redo') {
+        // 重做
         if (index < length) {
-          this.canvasArr[this.nowCanvas].index = index + 1
+          this.getArrIndex = index + 1
         }
       } else if (str === 'undoall') {
-        this.canvasArr[this.nowCanvas].index = 0
+        // 撤销所有
+        this.getArrIndex = 0
       } else {
-        this.canvasArr[this.nowCanvas].index = length
+        // 重做所有
+        this.getArrIndex = length
       }
+      this.nowCanvasArr.imgData = this.nowCanvasArr.dataArr[this.getArrIndex].imgData
+      this.nowCanvasArr.context.putImageData(this.nowCanvasArr.imgData, 0, 0)
     }
   }
 }

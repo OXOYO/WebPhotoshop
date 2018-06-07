@@ -1,3 +1,4 @@
+// 图片水平，垂直翻转
 import store from '../store'
 function flip (num) {
   var index = store.state.nowCanvas
