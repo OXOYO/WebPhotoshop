@@ -216,9 +216,9 @@
           <span>模糊</span>
           <span>Ctrl+Shift+B</span>
         </div>
-        <div class="navBox" @click="selectGrayscale('雾化')">
+        <div class="navBox" @click="selectGrayscale('灰度化')">
           <img src="../../src/assets/icons/cloud.png" height="16" width="16">
-          <span>雾化</span>
+          <span>灰度化</span>
           <span>Ctrl+Shift+M</span>
         </div>
         <div class="navBox" @click="selectGrayscale('锐化')">

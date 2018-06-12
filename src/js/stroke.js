@@ -1,3 +1,4 @@
+import clip from './clip'
 var Stroke = {
   // 擦除
   clear: function () {
@@ -182,29 +183,11 @@ var Stroke = {
   // 获取移动数据
   getMoveData: function () {
     var context = this.selectToolObj.context
-    var imgData = this.imgData
-    var w = imgData.width
-    var moveBoxData = context.getImageData(0, 0, this.selectToolObj.moveBoxLen[0], this.selectToolObj.moveBoxLen[1])
-    var data = imgData.data
-    var x1 = document.getElementById('moveBox').offsetLeft
-    var x2 = document.getElementById('moveBox').offsetLeft + this.selectToolObj.moveBoxLen[0]
-    var y1 = document.getElementById('moveBox').offsetTop
-    var y2 = document.getElementById('moveBox').offsetTop + this.selectToolObj.moveBoxLen[1]
-    var j = 0
-    for (let y = y1; y < y2; y++) {
-      for (let x = x1; x < x2; x++) {
-        var i = (w * y + x) * 4
-        moveBoxData.data[j] = data[i]
-        moveBoxData.data[j + 1] = data[i + 1]
-        moveBoxData.data[j + 2] = data[i + 2]
-        moveBoxData.data[j + 3] = data[i + 3]
-        data[i] = data[i + 1] = data[i + 2] = 255
-        j += 4
-      }
-    }
-    this.selectToolObj.moveBoxData = moveBoxData
+    var arr = [document.getElementById('moveBox').offsetLeft, document.getElementById('moveBox').offsetTop].concat(this.selectToolObj.moveBoxLen)
+    var dataArr = clip.getData(this.imgData, arr)
+    this.selectToolObj.moveBoxData = dataArr[1]
     this.putImageData()
-    context.putImageData(moveBoxData, 0, 0)
+    context.putImageData(dataArr[1], 0, 0)
   },
   putMoveData: function () {
     var moveBoxData = this.selectToolObj.moveBoxData.data

@@ -28,7 +28,7 @@ export default new Vuex.Store({
         title: '模糊 Ctrl+Shift+B'
       }, {
         name: 'cloud',
-        title: '雾化 Ctrl+Shift+M'
+        title: '灰度化 Ctrl+Shift+M'
       }, {
         name: 'sharpen',
         title: '锐化 Ctrl+Shift+S'
