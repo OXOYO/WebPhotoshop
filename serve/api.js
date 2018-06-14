@@ -10,7 +10,7 @@ const router = express.Router()
 router.post('/api/login/createAccount',(req, res) => {
   // 先验证账号是否重复
   models.Login.find({name : req.body.name}, (err, data) => {
-    if (err) {
+    if (data.length === 0) {
       // 这里的req.body能够使用就在index.js中引入了const bodyParser = require('body-parser')
       let newAccount = new models.Login({
         name : req.body.name,
@@ -62,9 +62,8 @@ router.post('/api/upload', (req, res) => {
     if(err){
       console.log('图片保存到本地失败')
     }else{
-      let url = 'http://localhost:8088/' + path
       // 将图片地址存入数据库
-      models.Login.update({'_id': id}, {$push: {imgUrl: url}}, (err, data) => {
+      models.Login.update({'_id': id}, {$push: {imgUrl: path}}, (err, data) => {
         if (err) {
           console.log('图片地址写入数据库失败')
         } else {
