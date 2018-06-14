@@ -5,7 +5,7 @@
       <span v-bind:class="classObjectTwo" @click="selectspan='图层管理'">图层管理</span>
     </div>
     <div class="historyList" v-show="selectspan==='历史记录'">
-      <div class="recordWrapperCon">
+      <div class="recordWrapperCon" v-scrollBar>
         <div
           class="recordWrapperConList"
           v-for="(item, index) in repeatArr"
@@ -26,7 +26,7 @@
       </div>
     </div>
     <div class="levelList" v-show="selectspan==='图层管理'">
-      <div class="recordWrapperCon">
+      <div class="recordWrapperCon" v-scrollBar>
         <div class="recordWrapperConList">
           <img src="../../src/assets/icons/background.png" height="16" width="16">
           <span>背景</span>
@@ -165,6 +165,7 @@ export default {
     top: 30px;
     width: 100%;
     .recordWrapperCon {
+      position: relative;
       height: 110px;
       overflow-y: auto;
       cursor: pointer;

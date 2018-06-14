@@ -13,7 +13,7 @@
           <!-- 标尺 -->
           <ruler class="main-ruler"></ruler>
           <!-- 画布 -->
-          <div class="main-box">
+          <div class="main-box" v-scrollBar>
             <sketchpad></sketchpad>
           </div>
           <!-- 颜色选择器 -->

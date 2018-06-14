@@ -1,7 +1,7 @@
 <template>
 <div class="login-wrapper" v-show="popUpsKey.login">
   <span class="login-close" @click="popUpsKey.login=false"></span>
-  <div class="login-title">{{loginTitle}}</div>
+  <div class="login-title">{{titleArr[0]}}</div>
   <div class="login-info">
     <input class="user-name" placeholder="输入用户名/邮箱/手机号"  type="text" v-model="account.name">
     <input class="pass-word" placeholder="输入密码" type="password" value="" v-model="account.password">
@@ -14,9 +14,9 @@
         <input type="checkbox" name="rememberMe" id="rememberMe" value="true" checked="checked" class="auto-login" tabindex="4">
         <label for="rememberMe">下次自动登录</label>
       </div>
-      <div class="foget-password" @click="loginTitle='注册账号',buttonTitle='注册'">立即注册</div>
+      <div class="foget-password" @click="title=title==='login'?'registered':'login',showError=false">{{titleArr[2]}}</div>
     </div>
-    <button class="login-button" @click="login">{{buttonTitle}}</button>
+    <button class="login-button" @click="login">{{titleArr[1]}}</button>
   </div>
 </div>
 </template>
@@ -33,16 +33,22 @@ export default {
       },
       showError: false,
       index: 0,
-      errorMessage: ['请输入用户名！', '请输入密码！', '帐户名或登录密码不正确，请重新输入'],
-      loginTitle: '帐号登录',
-      buttonTitle: '登录'
+      errorMessage: ['请输入用户名！', '请输入密码！', '帐户名或登录密码不正确，请重新输入', '该账号已被注册！'],
+      title: 'login'
     }
   },
   computed: {
     ...mapState([
       'popUpsKey',
       'accountObj'
-    ])
+    ]),
+    titleArr () {
+      if (this.title === 'login') {
+        return ['帐号登录', '登录', '立即注册']
+      } else {
+        return ['注册账号', '注册', '立即登录']
+      }
+    }
   },
   mounted () {
     this.init()
@@ -58,7 +64,7 @@ export default {
     },
     login () {
       if (this.checkInput()) {
-        if (this.loginTitle === '帐号登录') {
+        if (this.title === 'login') {
           // 登录
           this.checkAccount()
         } else {
@@ -91,10 +97,7 @@ export default {
           if (response.body.length > 0) {
             // 有账号
             this.setStorage()
-            this.accountObj.id = response.body[0]._id
-            this.accountObj.name = response.body[0].name
-            this.accountObj.password = response.body[0].password
-            this.accountObj.imgUrl = response.body[0].imgUrl
+            this.putDataToState(response.body[0])
             this.popUpsKey.login = false
           } else {
             // 无账号
@@ -111,9 +114,16 @@ export default {
       let params = this.account
       this.$http.post('/api/login/createAccount', params)
         .then((response) => {
-          if (response.body === 'createAccount successed') {
+          if (response.bodyText === 'Duplicate account') {
+            // 账号重复
+            this.showError = true
+            this.index = 3
+          } else {
             // 注册成功
             this.setStorage()
+            this.title = 'registered'
+            this.putDataToState(response.bodyText)
+            this.popUpsKey.login = false
           }
         })
         .catch((reject) => {
@@ -128,6 +138,12 @@ export default {
     // 从本地存储获取数据
     getStorage () {
       return JSON.parse(localStorage.getItem('account'))
+    },
+    putDataToState (obj) {
+      this.accountObj.id = obj._id
+      this.accountObj.name = obj.name
+      this.accountObj.password = obj.password
+      this.accountObj.imgUrl = obj.imgUrl
     }
   }
 }
