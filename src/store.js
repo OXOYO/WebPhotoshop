@@ -62,6 +62,9 @@ export default new Vuex.Store({
       }, {
         name: 'colorCurve',
         title: '曲线'
+      }, {
+        name: 'autolevel',
+        title: '色阶'
       }
     ],
     // 当前使用的是哪个工具
@@ -92,7 +95,7 @@ export default new Vuex.Store({
     // 窗口
     showPops: {
       // 历史记录
-      showRecord: false,
+      showRecord: true,
       // 工具
       showTools: true
     },
@@ -114,18 +117,24 @@ export default new Vuex.Store({
       clearCanvas: false,
       // 关于
       aboutWebPhotoshop: false,
-      // 亮度/对比度
-      light: false,
+      // 登录
+      login: false
+    },
+    // 右侧弹窗
+    mainPopKey: {
+      // 色阶
+      colorLevel: false,
       // 色相/饱和度
       colorpalettes: false,
       // 色彩曲线
       colorCurve: false,
-      // 色阶
-      colorLevel: false,
+      // 亮度/对比度
+      light: false
+    },
+    // 画布上的弹窗
+    canvasPopKey: {
       // 色彩选择器
-      colorPicker: false,
-      // 登录
-      login: false
+      colorPicker: false
     }
   },
   mutations: {

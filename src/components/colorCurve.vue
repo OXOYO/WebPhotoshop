@@ -1,111 +1,96 @@
 <template>
-  <popSlot :title="'曲线'" :prop="'colorCurve'">
-    <div class="curveWrapper recordWrapper">
-      <div class="curvetool">
-        <div class="curveSelect">
-          <div class="selectOne" :class="{selectStyle: type==='rgb'}" @click="changeType('rgb')">RGB</div>
-          <div class="selectTwo" :class="{selectStyle: type==='r'}" @click="changeType('r')">R</div>
-          <div class="selectTwo" :class="{selectStyle: type==='g'}" @click="changeType('g')">G</div>
-          <div class="selectTwo" :class="{selectStyle: type==='b'}" @click="changeType('b')">B</div>
-        </div>
-        <div class="curveBox">
-          <div class="boxLeft">
-            <input type="text" v-model="inputOutY">
-            <input type="text" v-model="inputOutX">
-          </div>
-          <div class="boxRight">
-            <div class="boxBackground">
-              <div class="right bottom"></div>
-              <div class="right bottom"></div>
-              <div class="right bottom"></div>
-              <div class="bottom"></div>
-              <div class="right bottom"></div>
-              <div class="right bottom"></div>
-              <div class="right bottom"></div>
-              <div class="bottom"></div>
-              <div class="right bottom"></div>
-              <div class="right bottom"></div>
-              <div class="right bottom"></div>
-              <div class="bottom"></div>
-              <div class="right"></div>
-              <div class="right"></div>
-              <div class="right"></div>
-              <div></div>
-            </div>
-            <div class="canvasCurveBox" @mousedown="down">
-              <div v-show="type==='r'">
-                <canvas width="510" height="510" class="rCurve"></canvas>
-              </div>
-              <div v-show="type==='g'">
-                <canvas width="510" height="510" class="gCurve"></canvas>
-              </div>
-              <div v-show="type==='b'">
-                <canvas width="510" height="510" class="bCurve"></canvas>
-              </div>
-              <div v-show="type==='rgb'">
-                <canvas width="510" height="510" class="rgbCurve"></canvas>
-              </div>
-              <div class="moveline" :class="boderColor">
-                <!-- 上 -->
-                <div class="horizontal"
-                  :style="{top: 255-inputOutY+'px'}"
-                  @mousedown="moveHorizontal($event, 'top')"
-                >
-                  <div class="tran"></div>
-                  <div class="line"></div>
-                  <div class="tran"></div>
-                </div>
-                <!-- 下 -->
-                <div class="horizontal"
-                  :style="{top: 255-inputOutX+'px'}"
-                  @mousedown="moveHorizontal($event, 'bottom')"
-                >
-                  <div class="tran"></div>
-                  <div class="line"></div>
-                  <div class="tran"></div>
-                </div>
-                <!-- 左 -->
-                <div class="vertical"
-                  :style="{left: inputInX+'px'}"
-                  @mousedown="moveHorizontal($event, 'left')"
-                >
-                  <div class="tran"></div>
-                  <div class="line"></div>
-                  <div class="tran"></div>
-                </div>
-                <!-- 右 -->
-                <div class="vertical"
-                  :style="{left: inputInY+'px'}"
-                  @mousedown="moveHorizontal($event, 'right')"
-                >
-                  <div class="tran"></div>
-                  <div class="line"></div>
-                  <div class="tran"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="boxBelow">
-            <input type="text" v-model="inputInX">
-            <input type="text" v-model="inputInY">
-          </div>
-        </div>
+  <div class="curveWrapper" v-show="mainPopKey.colorCurve">
+    <div class="curvetool">
+      <div class="curveSelect">
+        <div class="selectOne" :class="{selectStyle: type==='rgb'}" @click="changeType('rgb')">RGB</div>
+        <div class="selectTwo" :class="{selectStyle: type==='r'}" @click="changeType('r')">R</div>
+        <div class="selectTwo" :class="{selectStyle: type==='g'}" @click="changeType('g')">G</div>
+        <div class="selectTwo" :class="{selectStyle: type==='b'}" @click="changeType('b')">B</div>
       </div>
-      <div class="curveButton">
-        <div class="buttonBox">
-          <button @click="define">确定</button>
-          <button @click="cancel">取消</button>
+      <div class="curveBox">
+        <div class="boxLeft">
+          <input type="text" v-model="inputOutY">
+          <input type="text" v-model="inputOutX">
         </div>
-        <div class="lastCurve">
-          <canvas
-            class="littleCurve"
-            :width="nowCanvasArr.width"
-            :height="nowCanvasArr.height"
-          ></canvas>
+        <div class="boxRight">
+          <div class="boxBackground">
+            <div class="right bottom"></div>
+            <div class="right bottom"></div>
+            <div class="right bottom"></div>
+            <div class="bottom"></div>
+            <div class="right bottom"></div>
+            <div class="right bottom"></div>
+            <div class="right bottom"></div>
+            <div class="bottom"></div>
+            <div class="right bottom"></div>
+            <div class="right bottom"></div>
+            <div class="right bottom"></div>
+            <div class="bottom"></div>
+            <div class="right"></div>
+            <div class="right"></div>
+            <div class="right"></div>
+            <div></div>
+          </div>
+          <div class="canvasCurveBox" @mousedown="down">
+            <div v-show="type==='r'">
+              <canvas width="510" height="510" class="rCurve"></canvas>
+            </div>
+            <div v-show="type==='g'">
+              <canvas width="510" height="510" class="gCurve"></canvas>
+            </div>
+            <div v-show="type==='b'">
+              <canvas width="510" height="510" class="bCurve"></canvas>
+            </div>
+            <div v-show="type==='rgb'">
+              <canvas width="510" height="510" class="rgbCurve"></canvas>
+            </div>
+            <div class="moveline" :class="boderColor">
+              <!-- 上 -->
+              <div class="horizontal"
+                :style="{top: 255-inputOutY+'px'}"
+                @mousedown="moveHorizontal($event, 'top')"
+              >
+                <div class="tran"></div>
+                <div class="line"></div>
+                <div class="tran"></div>
+              </div>
+              <!-- 下 -->
+              <div class="horizontal"
+                :style="{top: 255-inputOutX+'px'}"
+                @mousedown="moveHorizontal($event, 'bottom')"
+              >
+                <div class="tran"></div>
+                <div class="line"></div>
+                <div class="tran"></div>
+              </div>
+              <!-- 左 -->
+              <div class="vertical"
+                :style="{left: inputInX+'px'}"
+                @mousedown="moveHorizontal($event, 'left')"
+              >
+                <div class="tran"></div>
+                <div class="line"></div>
+                <div class="tran"></div>
+              </div>
+              <!-- 右 -->
+              <div class="vertical"
+                :style="{left: inputInY+'px'}"
+                @mousedown="moveHorizontal($event, 'right')"
+              >
+                <div class="tran"></div>
+                <div class="line"></div>
+                <div class="tran"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="boxBelow">
+          <input type="text" v-model="inputInX">
+          <input type="text" v-model="inputInY">
         </div>
       </div>
     </div>
-  </popSlot>
+  </div>
 </template>
 
 <script>
@@ -150,8 +135,6 @@ export default {
       partImgData: '',
       // 是否修改
       isChange: false,
-      // 预览画布
-      littleContext: '',
       key: false
     }
   },
@@ -195,7 +178,7 @@ export default {
     },
     // 监听曲线调整工具的开启状况
     isColorCurve () {
-      return this.popUpsKey.colorCurve
+      return this.mainPopKey.colorCurve
     },
     // 输入输出上下限
     inputArr () {
@@ -204,7 +187,7 @@ export default {
     ...mapState([
       'canvasArr',
       'nowCanvas',
-      'popUpsKey'
+      'mainPopKey'
     ])
   },
   watch: {
@@ -213,8 +196,6 @@ export default {
         this.init()
         // 将当前画布数据赋给imgData
         this.partImgData = this.imgData = this.nowCanvasArr.imgData
-        // 初始化
-        this.littleContext = document.getElementsByClassName('littleCurve')[0].getContext('2d')
         // RGB
         this.stroke('rgb')
         // R
@@ -504,7 +485,6 @@ export default {
       }
       this.partImgData = outData
       this.nowCanvasArr.context.putImageData(outData, 0, 0)
-      this.littleContext.putImageData(outData, 0, 0)
     },
     // 横竖线事件
     moveHorizontal (event, string) {
@@ -538,20 +518,6 @@ export default {
         a.canvasBox.removeEventListener('mousemove', move)
         curveWrapper.removeEventListener('mouseup', up)
       }
-    },
-    // 确定
-    define () {
-      this.isChange = true
-      var obj = {
-        id: 36,
-        imgData: this.partImgData
-      }
-      this.$store.commit('changeDataArr', obj)
-      this.popUpsKey.colorCurve = false
-    },
-    // 取消
-    cancel () {
-      this.popUpsKey.colorCurve = false
     }
   }
 }
@@ -559,9 +525,7 @@ export default {
 
 <style lang="scss">
 .curveWrapper {
-  width: 430px;
   height: 315px;
-  background-color: #efefef;
   display: flex;
   .curvetool {
     padding: 10px;
@@ -715,30 +679,6 @@ export default {
         input:nth-child(2) {
           margin-left: 208px;
         }
-      }
-    }
-  }
-  .curveButton {
-    padding: 10px;
-    margin-top: 20px;
-    .buttonBox {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      button {
-        box-sizing: content-box;
-        width: 96px;
-        height: 16.8px;
-        padding: 2px 0;
-        margin-bottom: 15px;
-      }
-    }
-    .lastCurve {
-      height: 196px;
-      display: flex;
-      align-items: center;
-      canvas {
-        width: 100%;
       }
     }
   }

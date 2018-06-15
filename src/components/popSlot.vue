@@ -29,7 +29,8 @@ export default {
   computed: {
     ...mapState([
       'popUpsKey',
-      'showPops'
+      'showPops',
+      'mainPopKey'
     ]),
     popStyle () {
       if (this.num) {
@@ -58,7 +59,7 @@ export default {
       if (this.prop === 'showRecord' || this.prop === 'showTools') {
         return this.showPops[this.prop]
       } else {
-        return this.popUpsKey[this.prop]
+        return typeof (this.popUpsKey[this.prop]) === 'boolean' ? this.popUpsKey[this.prop] : this.mainPopKey[this.prop]
       }
     }
   },

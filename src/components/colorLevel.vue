@@ -1,65 +1,63 @@
 <template>
-  <popSlot :title="'色阶'" :prop="'colorLevel'">
-    <div class="levelWrapper">
-      <div class="levelLeft">
-        <div class="aisleSelect">
-          <div class="selectOne" :class="{selectBox: type==='rgb'}" @click="changeType('rgb')">RGB</div>
-          <div :class="{selectBox: type==='r'}" @click="changeType('r')">R</div>
-          <div :class="{selectBox: type==='g'}" @click="changeType('g')">G</div>
-          <div :class="{selectBox: type==='b'}" @click="changeType('b')">B</div>
+  <div class="levelWrapper" v-show="mainPopKey.colorLevel">
+    <div class="levelLeft">
+      <div class="aisleSelect">
+        <div class="selectOne" :class="{selectBox: type==='rgb'}" @click="changeType('rgb')">RGB</div>
+        <div :class="{selectBox: type==='r'}" @click="changeType('r')">R</div>
+        <div :class="{selectBox: type==='g'}" @click="changeType('g')">G</div>
+        <div :class="{selectBox: type==='b'}" @click="changeType('b')">B</div>
+      </div>
+      <div class="histogramBox">
+        <div class="enterLevelBox">
+          <div class="histogramTitle">输入色阶：</div>
+          <div class="histogram">
+            <canvas width="510" height="256" v-show="type==='rgb'" class="levelHistogram"></canvas>
+            <canvas width="510" height="256" v-show="type==='r'" class="levelHistogram"></canvas>
+            <canvas width="510" height="256" v-show="type==='g'" class="levelHistogram"></canvas>
+            <canvas width="510" height="256" v-show="type==='b'" class="levelHistogram"></canvas>
+          </div>
+          <div class="histogramBar" @mousedown="dowm($event, 0)">
+            <svg :style="{left: inputarr[0][0]+'px'}">
+              <use xlink:href="#black"></use>
+            </svg>
+            <svg :style="{left: inputarr[0][1]+'px'}">
+              <use xlink:href="#gray"></use>
+            </svg>
+            <svg :style="{left: inputarr[0][2]+'px'}">
+              <use xlink:href="#white"></use>
+            </svg>
+          </div>
+          <div class="histogramInput">
+            <input type="text" v-model="inputarr[0][0]">
+            <input type="text" v-model="inputarr[0][1]">
+            <input type="text" v-model="inputarr[0][2]">
+          </div>
         </div>
-        <div class="histogramBox">
-          <div class="enterLevelBox">
-            <div class="histogramTitle">输入色阶：</div>
-            <div class="histogram">
-              <canvas width="510" height="256" v-show="type==='rgb'" class="levelHistogram"></canvas>
-              <canvas width="510" height="256" v-show="type==='r'" class="levelHistogram"></canvas>
-              <canvas width="510" height="256" v-show="type==='g'" class="levelHistogram"></canvas>
-              <canvas width="510" height="256" v-show="type==='b'" class="levelHistogram"></canvas>
-            </div>
-            <div class="histogramBar" @mousedown="dowm($event, 0)">
-              <svg :style="{left: inputarr[0][0]+'px'}">
+        <div class="outputLevelBox">
+          <div class="outTitle">输出色阶</div>
+          <div class="outSelect">
+            <div class="outList"></div>
+            <div class="outBar" @mousedown="dowm($event, 1)">
+              <svg :style="{left: inputarr[1][0]+'px'}">
                 <use xlink:href="#black"></use>
               </svg>
-              <svg :style="{left: inputarr[0][1]+'px'}">
-                <use xlink:href="#gray"></use>
-              </svg>
-              <svg :style="{left: inputarr[0][2]+'px'}">
+              <svg :style="{left: inputarr[1][1]+'px'}">
                 <use xlink:href="#white"></use>
               </svg>
             </div>
-            <div class="histogramInput">
-              <input type="text" v-model="inputarr[0][0]">
-              <input type="text" v-model="inputarr[0][1]">
-              <input type="text" v-model="inputarr[0][2]">
-            </div>
           </div>
-          <div class="outputLevelBox">
-            <div class="outTitle">输出色阶</div>
-            <div class="outSelect">
-              <div class="outList"></div>
-              <div class="outBar" @mousedown="dowm($event, 1)">
-                <svg :style="{left: inputarr[1][0]+'px'}">
-                  <use xlink:href="#black"></use>
-                </svg>
-                <svg :style="{left: inputarr[1][1]+'px'}">
-                  <use xlink:href="#white"></use>
-                </svg>
-              </div>
-            </div>
-            <div class="outInput">
-              <input type="text" v-model="inputarr[1][0]">
-              <input type="text" v-model="inputarr[1][1]">
-            </div>
+          <div class="outInput">
+            <input type="text" v-model="inputarr[1][0]">
+            <input type="text" v-model="inputarr[1][1]">
           </div>
         </div>
       </div>
-      <div class="levelRight">
-        <button @click="run">确定</button>
-        <button>取消</button>
-      </div>
     </div>
-  </popSlot>
+    <!-- <div class="levelRight">
+      <button>确定</button>
+      <button>取消</button>
+    </div> -->
+  </div>
 </template>
 
 <script>
@@ -89,13 +87,13 @@ export default {
     ...mapState([
       'canvasArr',
       'nowCanvas',
-      'popUpsKey'
+      'mainPopKey'
     ]),
     inputarr () {
       return this.inputObj[this.type]
     },
     isShow () {
-      return this.popUpsKey.colorLevel
+      return this.mainPopKey.colorLevel
     }
   },
   watch: {
@@ -103,6 +101,12 @@ export default {
       if (val) {
         this.init()
       }
+    },
+    inputarr: {
+      handler () {
+        this.run()
+      },
+      deep: true
     }
   },
   methods: {
@@ -191,15 +195,20 @@ export default {
     },
     // 色阶调节
     gamma (x) {
-      var b = 0
-      var w = 255
-      var g = 0.51
+      var b = this.inputarr[0][0]
+      var w = this.inputarr[0][2]
+      var g = this.inputarr[0][1] / 255
+      var max = this.inputarr[1][1]
+      var min = this.inputarr[1][0]
       if (x < b) {
-        return 0
+        return pd(b)
       } else if (x > w) {
-        return 255
+        return pd(w)
       } else {
-        return Math.pow((x - b) / (w - b), 1 / g) * 255
+        return pd(Math.pow((x - b) / (w - b), 1 / g) * 255)
+      }
+      function pd (num) {
+        return num < min ? min : num > max ? max : num
       }
     },
     run () {
@@ -220,8 +229,6 @@ export default {
 <style lang="scss">
 .levelWrapper {
   padding: 10px;
-  border: 1px solid #81ADE3;
-  background-color: #efefef;
   display: flex;
   .levelLeft {
     .aisleSelect {
@@ -257,6 +264,7 @@ export default {
         width: 10px;
         height: 10px;
         transform: translateX(-4px);
+        cursor: pointer;
       }
       .enterLevelBox {
         .histogramTitle {

@@ -1,5 +1,5 @@
 <template>
-  <div class="popUps" :class="{backColor: isAddClass}" v-show="isShow">
+  <div class="popUps" v-show="isShow">
     <!-- 新建 -->
     <popSlot :name="'new'" :title="'新建'" :prop="'newCanvas'">
       <div class="recordWrapper setCanvas">
@@ -63,10 +63,6 @@
         </div>
       </div>
     </popSlot>
-    <!-- 亮度/对比度 -->
-    <fieldSet :name="'light'"></fieldSet>
-    <!-- 色相/饱和度 -->
-    <fieldSet :name="'colorpalettes'"></fieldSet>
     <!-- 关于WebPhotoshop -->
     <popSlot :name="'about'" :title="'确定'" :prop="'aboutWebPhotoshop'">
       <div class="recordWrapper aboutWebPhotoshop">
@@ -87,10 +83,6 @@
         </div>
       </div>
     </popSlot>
-    <!-- 色彩曲线调整工具 -->
-    <colorCurve v-if="canvasArr.length>0"></colorCurve>
-    <!-- 色阶 -->
-    <colorLevel v-if="canvasArr.length>0"></colorLevel>
     <!-- 登录 -->
     <login></login>
   </div>
@@ -99,10 +91,7 @@
 <script>
 import { mapState } from 'vuex'
 import buttonIcon from './selectmodules/buttonIcon.vue'
-import fieldSet from './selectmodules/fieldSet.vue'
 import popSlot from './popSlot.vue'
-import colorCurve from './colorCurve.vue'
-import colorLevel from './colorLevel.vue'
 import login from './login.vue'
 import openImg from '../js/openImg'
 import upload from '../js/upload'
@@ -110,10 +99,7 @@ export default {
   name: 'pop-ups',
   components: {
     buttonIcon,
-    fieldSet,
     popSlot,
-    colorCurve,
-    colorLevel,
     login
   },
   data () {
@@ -130,17 +116,10 @@ export default {
       'nowCanvas',
       'selectGrayscale'
     ]),
-    isAddClass () {
-      if (this.popUpsKey.light || this.popUpsKey.colorpalettes || this.popUpsKey.colorCurve || this.popUpsKey.colorLevel) {
-        return false
-      } else {
-        return true
-      }
-    },
     isShow () {
       var a = false
       for (const key in this.popUpsKey) {
-        if (this.popUpsKey[key] && key !== 'colorPicker') {
+        if (this.popUpsKey[key]) {
           a = true
           break
         }
@@ -172,14 +151,12 @@ export default {
 </script>
 
 <style lang="scss">
-.backColor {
-  background-color: rgba(204, 204, 204, 0.4);
-}
 .popUps {
   position: absolute;
   z-index: 100;
   width: 100%;
   height: 100%;
+  background-color: rgba(204, 204, 204, 0.4);
   top: 0px;
   overflow: hidden;
   display: flex;

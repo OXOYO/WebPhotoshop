@@ -425,7 +425,8 @@ export default {
       'showPops',
       'ruler',
       'accountObj',
-      'tools'
+      'tools',
+      'mainPopKey'
     ]),
     ...mapGetters([
       'nowCanvasArr'
@@ -465,7 +466,7 @@ export default {
       openImg.openLocalImg()
     },
     changeImgShow: function (string) {
-      this.popUpsKey[string] = true
+      this.mainPopKey[string] = true
     },
     selectGrayscale: function (string) {
       drawImg.change(string, this)
@@ -494,7 +495,7 @@ export default {
     },
     // 打开弹窗
     showPop: function (prop) {
-      this.$store.commit('changePopUpsKey', [prop, true])
+      this.popUpsKey[prop] = true
     },
     // 全屏
     fullScreen: function () {

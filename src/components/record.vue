@@ -1,10 +1,9 @@
 <template>
-  <div class="recordWrapper record">
+  <div class="record">
     <div class="recordWrapperTle">
-      <span v-bind:class="classObjectOne" @click="selectspan='历史记录'">历史记录</span>
-      <span v-bind:class="classObjectTwo" @click="selectspan='图层管理'">图层管理</span>
+      历史记录
     </div>
-    <div class="historyList" v-show="selectspan==='历史记录'">
+    <div class="historyList">
       <div class="recordWrapperCon" v-scrollBar>
         <div
           class="recordWrapperConList"
@@ -25,35 +24,15 @@
         <img src="../../src/assets/icons/redoall.png" height="16" width="16" title="重做所有" @click="changeIndex('redoall')">
       </div>
     </div>
-    <div class="levelList" v-show="selectspan==='图层管理'">
-      <div class="recordWrapperCon" v-scrollBar>
-        <div class="recordWrapperConList">
-          <img src="../../src/assets/icons/background.png" height="16" width="16">
-          <span>背景</span>
-          <input type="checkbox" v-model="value" @click="!value">
-        </div>
-      </div>
-      <div class="recordWrapperFot">
-        <img src="../../src/assets/icons/newlevel.png" height="16" width="16" title="新建图层">
-        <img src="../../src/assets/icons/no.png" height="16" width="16" title="删除图层">
-        <img src="../../src/assets/icons/copylevel.png" height="16" width="16" title="复制图层">
-        <img src="../../src/assets/icons/uplevel.png" height="16" width="16" title="向上移动图层">
-        <img src="../../src/assets/icons/downlevel.png" height="16" width="16" title="向下移动图层">
-        <img src="../../src/assets/icons/levelinfo.png" height="16" width="16" title="图层属性">
-      </div>
-    </div>
   </div>
 </template>
 
 <script>
 import { mapState, mapGetters } from 'vuex'
-import popSlot from './popSlot.vue'
 export default {
   name: 'record',
   data () {
     return {
-      selectspan: '历史记录',
-      value: true,
       tollsArr: ''
     }
   },
@@ -62,9 +41,6 @@ export default {
       ele.src = require('../../src/assets/icons/' + ele.name + '.png')
     })
     this.tollsArr = this.tools.concat(this.effectArr)
-  },
-  components: {
-    popSlot
   },
   computed: {
     repeatArr () {
@@ -76,7 +52,6 @@ export default {
       return repArr
     },
     ...mapState([
-      'canvasArr',
       'tools',
       'effectArr',
       'showPops'
@@ -91,24 +66,9 @@ export default {
       set (val) {
         this.nowCanvasArr.index = val
       }
-    },
-    classObjectOne: function () {
-      return {
-        selectSpan: this.selectspan === '历史记录',
-        title: this.selectspan === '历史记录'
-      }
-    },
-    classObjectTwo: function () {
-      return {
-        selectSpan: this.selectspan === '图层管理',
-        title: this.selectspan === '图层管理'
-      }
     }
   },
   methods: {
-    hideRecord: function () {
-      this.showPops.showRecord = false
-    },
     changeIndex (str) {
       var length = this.nowCanvasArr.dataArr.length - 1
       var index = this.getArrIndex
@@ -137,13 +97,11 @@ export default {
 </script>
 
 <style lang="scss">
-.recordWrapper {
-  position: relative;
-  width: 238px;
-  height: 164px;
+.record {
+  border-radius: 5px;
+  border: 1px solid #95B8E7;
   .recordWrapperTle {
-    height: 29px;
-    background-color: #D3E3F2;
+    height: 16px;
     border-bottom: 1px solid #95B8E7;
     span {
       padding: 4.5px 10px;
@@ -155,32 +113,24 @@ export default {
       margin-top: 4px;
       cursor: pointer;
     }
-    .selectSpan {
-      background: linear-gradient(to bottom,#EFF5FF 0,#ffffff 100%);
-      border-bottom-color: #fff;
-    }
   }
-  .historyList, .levelList{
-    position: absolute;
-    top: 30px;
-    width: 100%;
+  .historyList {
     .recordWrapperCon {
       position: relative;
-      height: 110px;
+      height: 140px;
       overflow-y: auto;
       cursor: pointer;
       .recordWrapperConList {
-        height: 24px;
-        border: 1px solid #fff;
-        border-radius: 5px;
         display: flex;
         align-items: center;
+        height: 24px;
+        box-sizing: border-box;
         img {
           margin: 0 5px;
         }
       }
       .selectStyle {
-        border-color: #95BCFC;
+        border: 1px solid #95BCFC;
         background-color: #eaf2ff;
       }
     }

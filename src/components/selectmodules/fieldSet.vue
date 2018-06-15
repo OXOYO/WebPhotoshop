@@ -1,40 +1,34 @@
 <template>
-  <popSlot :name="name" :title="lightArr.title" :prop="name">
-    <div class="recordWrapper fieldset">
-      <div class="fieldsetTop">
-        <fieldset class="fieldsetBox" v-for="(item, index) in lightArr.data" :key="item.id">
-          <legend>{{item.title}}</legend>
-          <div class="controlBox">
-            <div class="slider" :class="name+'slider'" @mousedown="moveRound($event, index)">
-              <div class="sliderInner"></div>
-              <div class="sliderTip" :style="{left: left[index]+'px'}">
-                <div class="sliderNum">{{item.num}}</div>
-                <div class="sliderTipRound"></div>
-              </div>
-            </div>
-            <div class="sliderRule">
-              <span style="left: 0%;"></span>
-              <span style="left: 12.5%;"></span>
-              <span style="left: 25%;"></span>
-              <span style="left: 37.5%;"></span>
-              <span style="left: 50%;"></span>
-              <span style="left: 62.5%;"></span>
-              <span style="left: 75%;"></span>
-              <span style="left: 87.5%;"></span>
-              <span style="left: 100%;"></span>
-            </div>
-            <div class="sliderRulelabel">
-              <span :style="{left: a[0]}" v-for="a in rulelabel(item.len)" :key="a.id">{{a[1]}}</span>
+  <div class="fieldset" v-show="mainPopKey[name]">
+    <div class="fieldsetTop">
+      <fieldset class="fieldsetBox" v-for="(item, index) in lightArr.data" :key="item.id">
+        <legend>{{item.title}}</legend>
+        <div class="controlBox">
+          <div class="slider" :class="name+'slider'" @mousedown="moveRound($event, index)">
+            <div class="sliderInner"></div>
+            <div class="sliderTip" :style="{left: left[index]+'px'}">
+              <div class="sliderNum">{{item.num}}</div>
+              <div class="sliderTipRound"></div>
             </div>
           </div>
-        </fieldset>
-      </div>
-      <div class="fieldsetBtn">
-        <buttonIcon :type="'closeSecond'" :callback="close" :prop="name"></buttonIcon>
-        <buttonIcon :type="'defineSecond'" :callback="close" :prop="name"></buttonIcon>
-      </div>
+          <div class="sliderRule">
+            <span style="left: 0%;"></span>
+            <span style="left: 12.5%;"></span>
+            <span style="left: 25%;"></span>
+            <span style="left: 37.5%;"></span>
+            <span style="left: 50%;"></span>
+            <span style="left: 62.5%;"></span>
+            <span style="left: 75%;"></span>
+            <span style="left: 87.5%;"></span>
+            <span style="left: 100%;"></span>
+          </div>
+          <div class="sliderRulelabel">
+            <span :style="{left: a[0]}" v-for="a in rulelabel(item.len)" :key="a.id">{{a[1]}}</span>
+          </div>
+        </div>
+      </fieldset>
     </div>
-  </popSlot>
+  </div>
 </template>
 
 <script>
@@ -90,7 +84,7 @@ export default {
   },
   computed: {
     ...mapState([
-      'popUpsKey',
+      'mainPopKey',
       'canvasArr',
       'nowCanvas'
     ]),
@@ -98,32 +92,13 @@ export default {
       'nowCanvasArr'
     ]),
     isShow () {
-      return [this.popUpsKey.light, this.popUpsKey.colorpalettes]
+      return [this.mainPopKey.light, this.mainPopKey.colorpalettes]
     },
     lightArr () {
       return this.name === 'light' ? this.light : this.colorpalettes
     }
   },
   methods: {
-    close (prop) {
-      if (prop === this.name) {
-        // 取消
-        this.lightArr.data[0].num = this.num[0]
-        this.lightArr.data[1].num = this.num[1]
-        this.left[0] = (this.num[0] + 50) / 100 * 260
-        this.left[1] = (this.num[1] + 50) / 100 * 260
-      } else {
-        // 确定
-        this.num[0] = this.lightArr.data[0].num
-        this.num[1] = this.lightArr.data[1].num
-        var obj = {
-          id: this.name === 'light' ? 35 : 34,
-          imgData: this.canvasArr[this.nowCanvas].imgData
-        }
-        this.$store.commit('changeDataArr', obj)
-      }
-      this.$store.commit('changePopUpsKey', [this.name, false])
-    },
     moveRound (event, index) {
       var clientX = document.getElementsByClassName(this.name + 'slider')[index].getBoundingClientRect().left
       this.index = index
@@ -164,7 +139,6 @@ export default {
       // 处理后的像素信息
       const imgData = effect.setLight(this.imgData, Brightness, Contrast)
       // 更新像素信息数组和画布
-      this.nowCanvasArr.imgData = imgData
       this.nowCanvasArr.context.putImageData(imgData, 0, 0)
     },
     // 将实时的色相饱和度反馈到画布上
@@ -187,7 +161,6 @@ export default {
         data[i + 3] = 255
       }
       // 更新像素信息数组和画布
-      this.nowCanvasArr.imgData = outImgdata
       this.nowCanvasArr.context.putImageData(outImgdata, 0, 0)
     },
     // 将RGB转为HSV
@@ -219,7 +192,7 @@ export default {
 
 <style lang="scss">
 .fieldset {
-  height: 235px;
+  height: 200px;
   width: 308px;
   .fieldsetTop {
     height: 200px;
@@ -281,17 +254,6 @@ export default {
           }
         }
       }
-    }
-  }
-  .fieldsetBtn {
-    height: 34px;
-    border-top: 1px solid #CBC6C6;
-    background-color: #F4F4F4;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    &>div {
-      padding-right: 5px;
     }
   }
 }

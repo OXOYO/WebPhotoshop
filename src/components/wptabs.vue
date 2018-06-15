@@ -50,8 +50,8 @@ export default {
       'tools',
       'toolId',
       'globalColor',
-      'popUpsKey',
-      'showPops'
+      'showPops',
+      'canvasPopKey'
     ])
   },
   watch: {
@@ -69,7 +69,7 @@ export default {
     openColorPicker (index) {
       this.$store.commit('changeglobalColor', this.changeColor[index - 1])
       if (index === this.colorkey) {
-        this.popUpsKey.colorPicker = true
+        this.canvasPopKey.colorPicker = true
       } else {
         this.colorkey = index
       }

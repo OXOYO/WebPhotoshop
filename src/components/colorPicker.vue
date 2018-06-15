@@ -1,59 +1,61 @@
 <template>
-  <div class="colorWrapper" v-show="popUpsKey.colorPicker">
-    <div class="colorTitle">
-      <span>颜色选择器</span>
-      <span class="colorClose icon" @click="isShow"></span>
-    </div>
-    <div class="colorContent">
-      <div class="colorMap">
-        <h2>拖动圆圈选择颜色</h2>
-        <div class="colorMapBox borderStyle" @mousedown="roundMove($event)">
-          <img src="../../src/assets/images/mappoint.gif" draggable="false" :style="roundPosition">
-        </div>
+  <div class="main-pop" v-show="canvasPopKey.colorPicker">
+    <div class="colorWrapper">
+      <div class="colorTitle">
+        <span>颜色选择器</span>
+        <span class="colorClose icon" @click="isShow"></span>
       </div>
-      <div class="colorMapBar">
-        <div class="colorBar borderStyle" @mousedown="barMove($event)">
-          <img src="../../src/assets/images/rangearrows.gif" :style="{top: topNum}" draggable="false">
-        </div>
-      </div>
-      <div class="colorActive">
-        <div class="colorActiveTop">
-          <div class="colorActiveBox borderStyle">
-            <div :style="{backgroundColor: '#'+transleteArr[2].color}"></div>
-            <div :style="{backgroundColor: 'rgb('+prvColor[0]+','+prvColor[1]+','+prvColor[2]+')'}"></div>
+      <div class="colorContent">
+        <div class="colorMap">
+          <h2>拖动圆圈选择颜色</h2>
+          <div class="colorMapBox borderStyle" @mousedown="roundMove($event)">
+            <img src="../../src/assets/images/mappoint.gif" draggable="false" :style="roundPosition">
           </div>
         </div>
-        <div class="colorActiveSelect">
-          <div v-for="(item, k) in [transleteArr[0], transleteArr[1]]" :key="item.id" :class="{marginStyle: k === 1}">
-            <div class="colorActiveSelectList" v-for="(value, key) in item" :key="value.id">
-              <input type="radio" :id="key" :value="key" v-model="picked">
-              <label :for="key" class="selectName">{{key}}:</label >
-              <input
-                type="text"
-                class="selectInput"
-                :value="transleteArr[k][key]"
-                @input="changeInput($event.target.value, k, key)"
-                @keydown.up="keydown('up', $event.target.value, k, key)"
-                @keydown.down="keydown('down', $event.target.value, k, key)"
-              >
-              <span v-show="k === 0 && key !== 'H'">%</span>
-              <span v-show="key === 'H'">°</span>
+        <div class="colorMapBar">
+          <div class="colorBar borderStyle" @mousedown="barMove($event)">
+            <img src="../../src/assets/images/rangearrows.gif" :style="{top: topNum}" draggable="false">
+          </div>
+        </div>
+        <div class="colorActive">
+          <div class="colorActiveTop">
+            <div class="colorActiveBox borderStyle">
+              <div :style="{backgroundColor: '#'+transleteArr[2].color}"></div>
+              <div :style="{backgroundColor: 'rgb('+prvColor[0]+','+prvColor[1]+','+prvColor[2]+')'}"></div>
             </div>
           </div>
-          <div class="colorActiveSelectList">
-            <span class="selectName">#:</span>
-            <input type="text" class="selectInput selectInputBottom" v-model="transleteArr[2].color">
+          <div class="colorActiveSelect">
+            <div v-for="(item, k) in [transleteArr[0], transleteArr[1]]" :key="item.id" :class="{marginStyle: k === 1}">
+              <div class="colorActiveSelectList" v-for="(value, key) in item" :key="value.id">
+                <input type="radio" :id="key" :value="key" v-model="picked">
+                <label :for="key" class="selectName">{{key}}:</label >
+                <input
+                  type="text"
+                  class="selectInput"
+                  :value="transleteArr[k][key]"
+                  @input="changeInput($event.target.value, k, key)"
+                  @keydown.up="keydown('up', $event.target.value, k, key)"
+                  @keydown.down="keydown('down', $event.target.value, k, key)"
+                >
+                <span v-show="k === 0 && key !== 'H'">%</span>
+                <span v-show="key === 'H'">°</span>
+              </div>
+            </div>
+            <div class="colorActiveSelectList">
+              <span class="selectName">#:</span>
+              <input type="text" class="selectInput selectInputBottom" v-model="transleteArr[2].color">
+            </div>
           </div>
         </div>
-      </div>
-      <div class="colorButton">
-        <div class="colorButtonTop">
-          <button @click="isShow">确定</button>
-          <button @click="closeBox">取消</button>
-        </div>
-        <div class="colorButtonGrid">
-          <span v-for="(item, index) in colorListArr" :key="item.id" :title="'#'+item" :style="{backgroundColor: '#'+item}" @click="changeColorGrid(index)"></span>
-          <span class="colorButtonGridDle"></span>
+        <div class="colorButton">
+          <div class="colorButtonTop">
+            <button @click="isShow">确定</button>
+            <button @click="closeBox">取消</button>
+          </div>
+          <div class="colorButtonGrid">
+            <span v-for="(item, index) in colorListArr" :key="item.id" :title="'#'+item" :style="{backgroundColor: '#'+item}" @click="changeColorGrid(index)"></span>
+            <span class="colorButtonGridDle"></span>
+          </div>
         </div>
       </div>
     </div>
@@ -107,7 +109,7 @@ export default {
   computed: {
     // 开关
     showColorPicker () {
-      return this.popUpsKey.colorPicker
+      return this.canvasPopKey.colorPicker
     },
     transleteArr () {
       return [{
@@ -157,12 +159,12 @@ export default {
     },
     ...mapState([
       'globalColor',
-      'popUpsKey'
+      'canvasPopKey'
     ])
   },
   methods: {
     isShow: function () {
-      this.popUpsKey.colorPicker = false
+      this.canvasPopKey.colorPicker = false
     },
     closeBox: function () {
       this.$store.commit('changeglobalColor', this.prvColor)
@@ -281,149 +283,156 @@ export default {
 </script>
 
 <style lang="scss">
-.colorWrapper {
+.main-pop {
   position: absolute;
+  top: 0;
   left: 0;
-  bottom: 0;
-  width: 540px;
-  height: 320px;
-  background-color: #efefef;
-  border: 1px outset #95B8E7;
-  font-family: Arial, Helvetica, Sans-Serif;
-  border-radius: 5px;
-  .colorTitle {
-    background-color: #ECF3FF;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-    border-bottom: 1px solid #95B8E7;
-    display: flex;
-    align-items: center;
-    padding: 3px 5px;
-    .colorClose {
-      background: url('../../src/assets/default/panel_tools.png') no-repeat -16px 0px;
-      cursor: pointer;
-      margin-left: 454px;
-    }
-  }
-  .colorContent {
-    display: flex;
-    .borderStyle {
-      border-bottom: 2px solid #fff;
-      border-left: 2px solid #9a9a9a;
-      border-right: 2px solid #fff;
-      border-top: 2px solid #9a9a9a;
-    }
-    .colorMap {
-      margin-top: 15px;
-      h2 {
-        font-size: 10px;
-        margin: 0;
-        text-align: center;
-      }
-      .colorMapBox {
-        position: relative;
-        width: 256px;
-        height: 256px;
-        margin: 0 10px;
-        overflow: hidden;
-        background-color: rgb(255, 0, 0);
-        background-image: url('../../src/assets/images/Maps.png');
-        cursor: crosshair;
-        img {
-          position: absolute;
-          width: 15px;
-          height: 15px;
-          transform: translateX(-50%) translateY(-50%);
-        }
+  height: 100%;
+  width: 100%;
+  .colorWrapper {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 540px;
+    height: 320px;
+    background-color: #efefef;
+    border: 1px outset #95B8E7;
+    font-family: Arial, Helvetica, Sans-Serif;
+    border-radius: 5px;
+    .colorTitle {
+      background-color: #ECF3FF;
+      border-top-left-radius: 5px;
+      border-top-right-radius: 5px;
+      border-bottom: 1px solid #95B8E7;
+      display: flex;
+      align-items: center;
+      padding: 3px 5px;
+      .colorClose {
+        background: url('../../src/assets/default/panel_tools.png') no-repeat -16px 0px;
+        cursor: pointer;
+        margin-left: 454px;
       }
     }
-    .colorMapBar {
-      .colorBar {
-        position: relative;
-        width: 20px;
-        height: 256px;
-        margin: 28px 10px 0 5px;
-        overflow: hidden;
-        background-image: url('../../src/assets/images/Bars.png');
-        cursor: n-resize;
-        img {
-          position: absolute;
-          width: 19px;
-          height: 7px;
-          transform: translateY(-50%);
-        }
+    .colorContent {
+      display: flex;
+      .borderStyle {
+        border-bottom: 2px solid #fff;
+        border-left: 2px solid #9a9a9a;
+        border-right: 2px solid #fff;
+        border-top: 2px solid #9a9a9a;
       }
-    }
-    .colorActive {
-      width: 100px;
-      .colorActiveTop {
-        font-size: 9px;
-        text-align: center;
-        &:before {
-          content: 'new'
+      .colorMap {
+        margin-top: 15px;
+        h2 {
+          font-size: 10px;
+          margin: 0;
+          text-align: center;
         }
-        &:after {
-          content: 'current'
-        }
-        .colorActiveBox {
-          margin: 0 auto;
-          width: 60px;
-          height: 60px;
-          div {
-            height: 30px;
-          }
-        }
-      }
-      .colorActiveSelect {
-        .marginStyle {
-          margin: 20px 0;
-        }
-        .colorActiveSelectList {
-          display: flex;
-          align-items: center;
-          font-family: Microsoft YaHei;
-          margin: 5px 0;
-          .selectName {
-            width: 12px;
-          }
-          .selectInput {
-            width: 30px;
+        .colorMapBox {
+          position: relative;
+          width: 256px;
+          height: 256px;
+          margin: 0 10px;
+          overflow: hidden;
+          background-color: rgb(255, 0, 0);
+          background-image: url('../../src/assets/images/Maps.png');
+          cursor: crosshair;
+          img {
+            position: absolute;
+            width: 15px;
             height: 15px;
-            outline: none;
-            border: 1px solid #aaa;
-            margin: 0 5px;
-          }
-          .selectInputBottom {
-            width: 50px;
+            transform: translateX(-50%) translateY(-50%);
           }
         }
       }
-    }
-    .colorButton {
-      width: 114.4px;
-      .colorButtonTop {
-        border-bottom: 1px solid #000;
-        margin-top: 12px;
-        button {
-          box-sizing: content-box;
-          width: 96px;
-          height: 16.8px;
-          padding: 2px 0;
-          margin-bottom: 5px;
-          margin-left: 7.2px;
+      .colorMapBar {
+        .colorBar {
+          position: relative;
+          width: 20px;
+          height: 256px;
+          margin: 28px 10px 0 5px;
+          overflow: hidden;
+          background-image: url('../../src/assets/images/Bars.png');
+          cursor: n-resize;
+          img {
+            position: absolute;
+            width: 19px;
+            height: 7px;
+            transform: translateY(-50%);
+          }
         }
       }
-      .colorButtonGrid {
-        margin-top: 10px;
-        span {
-          float: left;
-          width: 17px;
-          height: 15px;
-          border: 1px inset #aaa;
-          cursor: pointer;
+      .colorActive {
+        width: 100px;
+        .colorActiveTop {
+          font-size: 9px;
+          text-align: center;
+          &:before {
+            content: 'new'
+          }
+          &:after {
+            content: 'current'
+          }
+          .colorActiveBox {
+            margin: 0 auto;
+            width: 60px;
+            height: 60px;
+            div {
+              height: 30px;
+            }
+          }
         }
-        .colorButtonGridDle {
-          background-image: url('../../src/assets/images/NoColor.png')
+        .colorActiveSelect {
+          .marginStyle {
+            margin: 20px 0;
+          }
+          .colorActiveSelectList {
+            display: flex;
+            align-items: center;
+            font-family: Microsoft YaHei;
+            margin: 5px 0;
+            .selectName {
+              width: 12px;
+            }
+            .selectInput {
+              width: 30px;
+              height: 15px;
+              outline: none;
+              border: 1px solid #aaa;
+              margin: 0 5px;
+            }
+            .selectInputBottom {
+              width: 50px;
+            }
+          }
+        }
+      }
+      .colorButton {
+        width: 114.4px;
+        .colorButtonTop {
+          border-bottom: 1px solid #000;
+          margin-top: 12px;
+          button {
+            box-sizing: content-box;
+            width: 96px;
+            height: 16.8px;
+            padding: 2px 0;
+            margin-bottom: 5px;
+            margin-left: 7.2px;
+          }
+        }
+        .colorButtonGrid {
+          margin-top: 10px;
+          span {
+            float: left;
+            width: 17px;
+            height: 15px;
+            border: 1px inset #aaa;
+            cursor: pointer;
+          }
+          .colorButtonGridDle {
+            background-image: url('../../src/assets/images/NoColor.png')
+          }
         }
       }
     }

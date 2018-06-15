@@ -16,10 +16,7 @@
           <div class="main-box" v-scrollBar>
             <sketchpad></sketchpad>
           </div>
-          <!-- 颜色选择器 -->
-          <div class="main-pop" v-show="isShowPop">
-            <colorPicker></colorPicker>
-          </div>
+          <colorPicker></colorPicker>
           <!-- 初始化页面 -->
           <imgstr></imgstr>
         </div>
@@ -31,6 +28,7 @@
           </div>
           <div class="layers" v-show="showPops.showRecord">
             <record></record>
+            <rightpop></rightpop>
           </div>
         </div>
 			</div>
@@ -49,10 +47,11 @@ import wptabs from './wptabs.vue'
 import Sketchpad from './Sketchpad.vue'
 import Bot from './Bot.vue'
 import record from './record.vue'
-import colorPicker from './colorPicker.vue'
 import popUps from './popUps.vue'
 import ruler from './ruler.vue'
 import imgstr from './imgstr.vue'
+import rightpop from './rightPop.vue'
+import colorPicker from './colorPicker.vue'
 import { mapState } from 'vuex'
 export default {
   name: 'wrapper',
@@ -66,22 +65,15 @@ export default {
     Sketchpad,
     Bot,
     record,
-    colorPicker,
     popUps,
     ruler,
-    imgstr
+    imgstr,
+    rightpop,
+    colorPicker
   },
   methods: {},
   computed: {
-    isShowPop () {
-      if (this.popUpsKey.colorPicker) {
-        return true
-      } else {
-        return false
-      }
-    },
     ...mapState([
-      'popUpsKey',
       'showPops',
       'canvasArr'
     ])
@@ -113,14 +105,6 @@ export default {
         background-color: #c9d3e2;
         border-left: 1px solid #95B8E7;
         border-right: 1px solid #95B8E7;
-        .main-pop {
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          top: 0;
-          left: 0;
-          z-index: 3;
-        }
         .main-ruler {
           position: absolute;
         }
@@ -144,6 +128,9 @@ export default {
             height: 12px;
             cursor: pointer;
           }
+        }
+        .layers {
+          min-width: 280px;
         }
       }
     }
