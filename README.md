@@ -14,5 +14,28 @@
 - [x] 一些小工具(图片剪切、旋转，标尺，颜色选择器，操作记录等)
 - [x] 基于node的静态资源服务器
 
+## 演示地址
+[https://bijinfeng.github.io/WebPhotoshop/dist/#/][1]
+
 ## 项目截图
 
+![项目截图](src/assets/img/login.png)
+![项目截图](src/assets/img/interface.png)
+![项目截图](src/assets/img/colorselect.png)
+![项目截图](src/assets/img/tools.png)
+
+## 开发
+
+#### 安装 运行 构建
+
+    npm install
+
+    npm run dev
+
+    npm run build
+ 
+### 开启服务器
+
+    cd serve
+    
+    node index
