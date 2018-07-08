@@ -1,30 +1,18 @@
-# my-project
+# WebPhotoshop
 
-> A Vue.js project
+![](https://img.shields.io/badge/vue-2.5.2-brightgreen.svg)
 
-## Build Setup
+## 简介
 
-``` bash
-# install dependencies
-npm install
+本项目是一个基于Canvas的仿照Photoshop的在线图像处理软件，技术栈Vue+Express+MongoDB。
 
-# serve with hot reload at localhost:8080
-npm run dev
+## 项目特点
 
-# build for production with minification
-npm run build
+- [x] 基本的绘图工具
+- [x] 基本的图像处理工具（色相/饱和度，亮度/对比度, 色阶，滤镜）
+- [x] 曲线调整工具
+- [x] 一些小工具(图片剪切、旋转，标尺，颜色选择器，操作记录等)
+- [x] 基于node的静态资源服务器
 
-# build for production and view the bundle analyzer report
-npm run build --report
+## 项目截图
 
-# run unit tests
-npm run unit
-
-# run e2e tests
-npm run e2e
-
-# run all tests
-npm test
-```
-
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
