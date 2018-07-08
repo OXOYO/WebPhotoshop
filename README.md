@@ -1,10 +1,10 @@
 # WebPhotoshop
 
-![](https://img.shields.io/badge/vue-2.5.2-brightgreen.svg)
+![](https://img.shields.io/badge/vue-2.5.2-brightgreen.svg) ![](https://img.shields.io/badge/express-4.16.3-brightgreen.svg) ![](https://img.shields.io/badge/mongoose-5.1.3-brightgreen.svg)
 
 ## 简介
 
-本项目是一个基于Canvas的仿照Photoshop的在线图像处理软件，技术栈Vue+Express+MongoDB。
+本项目是一个基于Canvas的仿照Photoshop的在线图像处理软件，技术栈vue+express+mongoose。
 
 ## 项目特点
 
