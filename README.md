@@ -34,7 +34,7 @@ https://bijinfeng.github.io/WebPhotoshop/dist
 
     npm run build
  
-### 开启服务器
+#### 开启服务器
 
     cd serve
     
