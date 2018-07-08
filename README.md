@@ -15,7 +15,7 @@
 - [x] 基于node的静态资源服务器
 
 ## 演示地址
-[https://bijinfeng.github.io/WebPhotoshop/dist/#/][1]
+https://bijinfeng.github.io/WebPhotoshop/dist
 
 ## 项目截图
 
